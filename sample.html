@@ -1,28 +1,51 @@
 <html>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  This sample is based on
-    http://net.tutsplus.com/tutorials/javascript-ajax/an-introduction-to-the-raphael-js-library/
-  That source is a Raphael tutorial, and it does not use jQuery. I've modified
-  the tutorial to include jQuery.
+  This is an attempt to create a page with a textbox, whose contents
+  can be edited to create an SVG image on the same page.
   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <head>
     <meta charset="utf-8">
-    <title> Raphaël Play</title>
+    <title>Edit and See</title>
     <!-- <link rel="stylesheet" href="demo.css" media="screen">  -->
     <!-- <link rel="stylesheet" href="demo-print.css" media="print">  -->
     <script src="jquery-1.7.2.min.js"></script>
     <script src="raphael-min.js"></script>
-    <script src="sample.js"></script>
-    <style type="text/css">  
-      #raph {  
-        width: 25px;  
-        height: 25px;
-        border: 1px solid #aaa;  
-      }  
-    </style>  
+    <script id='mainJS' src="sample.js"></script>
+    <style type="text/css">
+      .honeycomb { font-family: "Amnesia Sans Mono", "monospace"; }
+    </style>
+    <script>
+      $(document).ready(function () {
+        return 0;
+        var dom = $('#mainJS')[0];
+        $.get(dom.src, function(data) {
+          //$('.result').html(data);
+          alert('Load was performed. Result:\n' + data);
+        });
+      });
+    </script>
   </head>  
   <body>  
-    <div id="raph" style="float:left"></div>  
-    <div id="raph2" style="float:right"></div>  
+    Hex Board<br>
+    <textarea id="code" class="honeycomb" rows=10 cols=120>
+  ubu u u ucu
+   . . * . .
+   b. O O .c
+   _ \ ^ / _
+
+    u u u u u u u
+    b. . * 0 . .c
+    . . O 0 1 . .
+    b. O O 0 0 .c
+    _ \ ^ ^ ^ /
+
+   ubu u u u ucu
+    . . . . . .
+   nbn n n n ncn
+    
+
+    </textarea>  
+    <div id="draw"></div>  
+    <textarea id="monitor" rows=10 cols=120></textarea>  
   </body>  
 </html>  
