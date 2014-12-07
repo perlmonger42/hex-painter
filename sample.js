@@ -92,6 +92,7 @@
     var Cx = margin + dx, Cy = margin, Row = 0;
     var playerColor = 'cyan';
     var hilightColor = 'yellow';
+    var opponentColor = 'red';
 
 
     where.children().remove();
@@ -169,6 +170,8 @@
           fill = playerColor;
         } else if (/[O]/.test(text)) {
           fill = 'white';
+         } else if (/[%]/.test(text)) {
+          fill = opponentColor;
         } else if (/[0@#!]/.test(text)) {
           fill = hilightColor;
         } else {
@@ -380,7 +383,8 @@
         } else if (c == 'c' || c == 'b' || c == 'u' || c == 'n' ||
                    (c >= '1' && c <= '9') ||
                    c == 'O' || c == '0' || c == '*' || c == '.' ||
-                   c == '@' || c == '#' || c == '!') {
+                   c == '@' || c == '#' || c == '!' ||
+                   c == '%') {
           var allowUpDownModifier    = true;
           var allowLeftRightModifier = true;
           var allowFourWayModifier   = true;
