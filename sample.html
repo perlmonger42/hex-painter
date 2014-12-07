@@ -1,35 +1,28 @@
 <html>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  This sample, which uses both Raphael and jQuery, is based on
-    http://stackoverflow.com/questions/3613636/using-jquery-with-raphael
-  It draws a gray rectangle in a Raphael (SVG) canvas. When you click on
-  the rectangle, the canvas fades out.
+  This sample is based on
+    http://net.tutsplus.com/tutorials/javascript-ajax/an-introduction-to-the-raphael-js-library/
+  That source is a Raphael tutorial, and it does not use jQuery. I've modified
+  the tutorial to include jQuery.
   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <head>
+    <meta charset="utf-8">
+    <title> Raphaël Play</title>
     <!-- <link rel="stylesheet" href="demo.css" media="screen">  -->
     <!-- <link rel="stylesheet" href="demo-print.css" media="print">  -->
     <script src="jquery-1.7.2.min.js"></script>
     <script src="raphael-min.js"></script>
-    <script type="text/javascript" charset="utf-8">
-      $("document").ready(function() {
-        var R = Raphael("canvas", 1050, 550);
-        var attr = {
-          fill: "#bbb",
-          "fill-opacity": 1,
-          stroke: "#222",
-          "stroke-width": 0.3,
-          "stroke-linejoin": "round"
-        };
-        path10 = R.path("m 221.63509,150.81487 97.24682,0 0,89.68452 -97.24682,0 0,-89.68452 z").attr(attr);
-        path10.click(function(){
-          $("#canvas").fadeOut();
-        });     
-      });
-    </script>
-
-  </head>
-  <body>
-
-  <div id="canvas"></div>
-  </body>
-</html>
+    <script src="sample.js"></script>
+    <style type="text/css">  
+      #raph {  
+        width: 25px;  
+        height: 25px;
+        border: 1px solid #aaa;  
+      }  
+    </style>  
+  </head>  
+  <body>  
+    <div id="raph" style="float:left"></div>  
+    <div id="raph2" style="float:right"></div>  
+  </body>  
+</html>  
