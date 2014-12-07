@@ -90,6 +90,8 @@
     var dy = Math.round(R / 2);  // delta-y for move-to's and line-to's
     var margin = 5;
     var Cx = margin + dx, Cy = margin + 2 * dy, Row = 0;
+    var playerColor = 'cyan';
+    var hilightColor = 'yellow';
 
     where.children().remove();
     where.css('border', '2px solid orange');
@@ -101,70 +103,75 @@
 
     ratio = 2;
     var tokens = tokenize(board_description);
-    var maxCx = 0, maxCy = 0;
-    for (var i = 0; i < tokens.length; ++i) {
+    var maxCx = 0, maxCy = 0, i;
+    for (i = 0; i < tokens.length; ++i) {
       var token = tokens[i];
       var type = token.type;
       var text = token.text;
+      var path;
 
       if (type == 'newline') {
         ++Row;
         Cy += 3 * dy;
         Cx = margin + dx;
         println('Row #' + Row + ' Cx:' + Cx + ' Cy:' + Cy);
-      } else if (type == 'hex' && /_/.test(text)) {
+      } else if (type == 'space') {
+        if (/_/.test(text)) {
+          Cx += 2 * dx;
+        } else if (/-/.test(text)) {
+          Cx += dx;
+        }
+      } else if (type == 'text') {
+        paper.text(Cx, Cy, text);
         Cx += 2 * dx;
-      } else if (type == 'hex' && /-/.test(text)) {
-        Cx += dx;
-      } else if (type == 'hex' && /\^/.test(text)) {
-        var path = 'M ' + (Cx - dx) + ' ' + (Cy) + ' ' +
-                   'l ' + (0) + ' ' + (-dy) + ' ' +
-                   'l ' + (dx) + ' ' + (-dy) + ' ' +
-                   'l ' + (dx) + ' ' + (dy) + ' ' +
-                   'l ' + (0) + ' ' + (dy) + ' ' +
-                   'l ' + (-dx) + ' ' + (-dy) + ' z';
-        paper.path(path).attr({fill: 'red', stroke: 'none'});
-        Cx += 2 * dx;
-      } else if (type == 'hex' && /\\/.test(text)) {
-        var path = 'M ' + (Cx - dx / 2) + ' ' + (Cy - 3 * dy / 2) + ' ' +
-                   'l ' + (dx / 2) + ' ' + (-dy / 2) + ' ' +
-                   'l ' + (dx) + ' ' + (dy) + ' ' +
-                   'l ' + (0) + ' ' + (dy) + ' ' +
-                   'l ' + (-dx) + ' ' + (-dy) + ' z';
-        paper.path(path).attr({fill: 'red', stroke: 'none'});
-        Cx += 2 * dx;
-      } else if (type == 'hex' && /\//.test(text)) {
-        var path = 'M ' + (Cx + dx / 2) + ' ' + (Cy - 3 * dy / 2) + ' ' +
-                   'l ' + (-dx / 2) + ' ' + (-dy / 2) + ' ' +
-                   'l ' + (-dx) + ' ' + (dy) + ' ' +
-                   'l ' + (0) + ' ' + (dy) + ' ' +
-                   'l ' + (dx) + ' ' + (-dy) + ' z';
-        paper.path(path).attr({fill: 'red', stroke: 'none'});
-        Cx += 2 * dx;
+      } else if (type == 'border') {
+        if (/\^/.test(text)) {
+          path = 'M ' + (Cx - dx) + ' ' + (Cy) + ' ' +
+                 'l ' + (0) + ' ' + (-dy) + ' ' +
+                 'l ' + (dx) + ' ' + (-dy) + ' ' +
+                 'l ' + (dx) + ' ' + (dy) + ' ' +
+                 'l ' + (0) + ' ' + (dy) + ' ' +
+                 'l ' + (-dx) + ' ' + (-dy) + ' z';
+          paper.path(path).attr({fill: playerColor, stroke: 'none'});
+          Cx += 2 * dx;
+        } else if (/\\/.test(text)) {
+          path = 'M ' + (Cx - dx / 2) + ' ' + (Cy - 3 * dy / 2) + ' ' +
+                 'l ' + (dx / 2) + ' ' + (-dy / 2) + ' ' +
+                 'l ' + (dx) + ' ' + (dy) + ' ' +
+                 'l ' + (0) + ' ' + (dy) + ' ' +
+                 'l ' + (-dx) + ' ' + (-dy) + ' z';
+          paper.path(path).attr({fill: playerColor, stroke: 'none'});
+          Cx += 2 * dx;
+        } else if (/\//.test(text)) {
+          path = 'M ' + (Cx + dx / 2) + ' ' + (Cy - 3 * dy / 2) + ' ' +
+                 'l ' + (-dx / 2) + ' ' + (-dy / 2) + ' ' +
+                 'l ' + (-dx) + ' ' + (dy) + ' ' +
+                 'l ' + (0) + ' ' + (dy) + ' ' +
+                 'l ' + (dx) + ' ' + (-dy) + ' z';
+          paper.path(path).attr({fill: playerColor, stroke: 'none'});
+          Cx += 2 * dx;
+        }
       } else if (type == 'hex') {
         var wedge = '';
-        var fill;
-        var dash;
+        var fill = 'lightgray';
+        var dash = '';
 
         wedge = '';
-        wedge += /u/.test(text) ? 'u' : /n/.test(text) ? 'n' : '';
-        wedge += /b/.test(text) ? 'b' : /c/.test(text) ? 'c' : '';
+        wedge += /[u789]/.test(text) ? 'u' : /[n123]/.test(text) ? 'n' : '';
+        wedge += /[b147]/.test(text) ? 'b' : /[c369]/.test(text) ? 'c' : '';
 
         if (/[*]/.test(text)) {
-          fill = 'red', dash = '';
+          fill = playerColor;
         } else if (/[O]/.test(text)) {
-          fill = 'white', dash = '';
-        } else if (/[01]/.test(text)) {
-          fill = 'yellow', dash = '';
+          fill = 'white';
+        } else if (/[0@#]/.test(text)) {
+          fill = hilightColor;
         } else {
-          fill = 'lightgray', dash = '.';
+          dash = '.';
         }
 
-        var x = Cx, y = Cy;
-        draw_hex(fill, dash, wedge);
-        if (/[1]/.test(text)) {
-          paper.circle(x, y, r / 3).attr({fill: 'red'});
-        }
+        var dot = /[@]/.test(text) ? '1' : /[#]/.test(text) ? '2' : '';
+        draw_hex(fill, dash, wedge, dot, token.label);
       }
     }
     paper.setSize(maxCx + dx + margin, maxCy + 2 * dy + margin);
@@ -172,33 +179,41 @@
 
     var s = '';
     var comma = '';
-    for (var i = 0; i < tokens.length; ++i) {
+    for (i = 0; i < tokens.length; ++i) {
       var t = tokens[i];
       if (t.type == 'newline') {
-        println(s); s = ''; comma = '';
+        println(s);
+        s = '';
+        comma = '';
       } else {
         s += comma + '[' + t.type + ': ' + t.text + ']';
         comma = ', ';
       }
     }
-    if (s != '') {
+    if (s !== '') {
       println(s);
     }
 
     return;
 
-    function draw_hex(fill, stroke, wedge) {
+    function draw_hex(fill, stroke, wedge, dot, label) {
       if (/b/.test(wedge)) {
         Cx -= dx;
       }
       if (Cx > maxCx) maxCx = Cx;
       if (Cy > maxCy) maxCy = Cy;
-      draw_hex_at(Cx, Cy, fill, stroke, wedge);
+      draw_hex_at(Cx, Cy, fill, stroke, wedge, dot);
+      if (label && label !== '') {
+        paper.text(Cx, Cy, label);
+      }
       Cx += 2 * dx;
+      if (/c/.test(wedge)) {
+        Cx -= dx;
+      }
     }
 
 
-    function draw_hex_at(x, y, fill, stroke, wedge) {
+    function draw_hex_at(x, y, fill, stroke, wedge, dot) {
       var poly, line;
       if (wedge == 'b') { // draw right half
         line = 'M ' + (x) + ' ' + (y - 2 * dy) + ' ' +
@@ -254,11 +269,20 @@
                'l ' + (dx) + ' ' + (dy) + ' ' +
                'l ' + (0) + ' ' + (2 * dy) + ' ' +
                'z';
-        paper.path(poly).attr({fill: fill, 'stroke-dasharray': stroke});
-        return;
       }
-      paper.path(poly).attr({fill: fill, stroke: 'none'});
-      paper.path(line).attr({'stroke-dasharray': stroke});
+
+      if (line) {
+        paper.path(poly).attr({fill: fill, stroke: 'none'});
+        paper.path(line).attr({'stroke-dasharray': stroke});
+      } else {
+        paper.path(poly).attr({fill: fill, 'stroke-dasharray': stroke});
+      }
+
+      if (dot === '1') {
+        paper.circle(x, y, r / 3).attr({fill: playerColor});
+      } else if (dot === '2') {
+        paper.circle(x, y, r / 6).attr({fill: playerColor});
+      }
       //                +                      <---+
       //               / \                         |
       //              /   \                        | 1/2 R
@@ -320,28 +344,66 @@
         } else if (c <= ' ') {
           // Ignore whitespace.
           ++i, c = source.charAt(i);
-        } else if (c == 'c') {
+        } else if (c == '_' || c == '-') {
+          // hex-sized-space or half-hex-sized-space
+          str = c, ++i, c = source.charAt(i);
+          result.push(make('space', str));
+        } else if (c == '/' || c == '^' || c == '\\') {
+          str = c, ++i, c = source.charAt(i);
+          result.push(make('border', str));
+        } else if (c == 'c' || c == 'b' || c == 'u' || c == 'n' ||
+                   (c >= '1' && c <= '9') ||
+                   c == 'O' || c == '0' || c == '*' || c == '.' ||
+                   c == '@' || c == '#') {
+          var allowUpDownModifier    = true;
+          var allowLeftRightModifier = true;
+          var allowFourWayModifier   = true;
+          var label                  = '';
           str = '';
-          while (c && c > ' ' && c != 'b') {
+          do {
+            if (c >= '1' && c <= '9') {
+              allowFourWayModifier = false;
+              allowLeftRightModifier = allowUpDownModifier = false;
+            } else if (c == 'c' || c == 'b') {
+              allowFourWayModifier = allowLeftRightModifier = false;
+            } else if (c == 'u' || c == 'n') {
+              allowFourWayModifier = allowUpDownModifier = false;
+            }
             str += c, ++i, c = source.charAt(i);
+          } while (allowLeftRightModifier && (c == 'c' || c == 'b') ||
+                   allowUpDownModifier    && (c == 'u' || c == 'n') ||
+                   allowFourWayModifier   && (c >= '1' && c <= '9'));
+
+          /* Collect an optional label (surrounded by '{' and '}' */
+          var save_i = i;
+          if (c == '{') {
+            ++i, c = source.charAt(i);
+            while (c >= ' ' && c != '}') {
+              label += c, ++i, c = source.charAt(i);
+            }
+            if (c == '}') {
+              /* Found the closing '}' */
+              ++i, c = source.charAt(i);
+            } else {
+              /* There was no closing '}', so this wasn't a label */
+              label = ''; i = save_i, c = source.charAt(i);
+            }
           }
-          if (c == 'b') {
-            str += c, ++i, c = source.charAt(i);
+          var tok = make('hex', str);
+          if (label !== '') {
+            tok.label = label;
           }
-          result.push(make('hex', str));
+          result.push(tok);
         } else {
           str = '';
-          while (c && c > ' ' && c != 'c' && c != 'b') {
+          while (c && c > ' ') {
             str += c, ++i, c = source.charAt(i);
           }
-          if (c == 'b') {
-            str += c, ++i, c = source.charAt(i);
-          }
-          result.push(make('hex', str));
+          result.push(make('text', str));
         }
       }
       return result;
-    };
+    }
 
   }
 
