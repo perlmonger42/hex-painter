@@ -89,12 +89,12 @@
     var dx = Math.round(r);    // delta-x for move-to's and line-to's
     var dy = Math.round(R / 2);  // delta-y for move-to's and line-to's
     var margin = 5;
-    var Cx = margin + dx, Cy = margin + 2 * dy, Row = 0;
+    var Cx = margin + dx, Cy = margin, Row = 0;
     var playerColor = 'cyan';
     var hilightColor = 'yellow';
 
+
     where.children().remove();
-    where.css('border', '2px solid orange');
     $('#monitor')[0].value = '';
 
     var drawingWidth = 500, drawingHeight = 500;
@@ -103,7 +103,8 @@
 
     ratio = 2;
     var tokens = tokenize(board_description);
-    var maxCx = 0, maxCy = 0, i;
+    var maxCx = Cx, maxCy = Cy, i;
+    println("margin: " + margin + "; dx: " + dx + "; dy: " + dy);//DEBUG
     for (i = 0; i < tokens.length; ++i) {
       var token = tokens[i];
       var type = token.type;
@@ -111,9 +112,13 @@
       var path;
 
       if (type == 'newline') {
-        ++Row;
-        Cy += 3 * dy;
-        Cx = margin + dx;
+        if (/SMALL-NEWLINE/.test(text)) {
+          Cy -= dy;
+        } else {
+          ++Row;
+          Cy += 3 * dy;
+          Cx = margin + dx;
+        }
         println('Row #' + Row + ' Cx:' + Cx + ' Cy:' + Cy);
       } else if (type == 'space') {
         if (/_/.test(text)) {
@@ -164,18 +169,22 @@
           fill = playerColor;
         } else if (/[O]/.test(text)) {
           fill = 'white';
-        } else if (/[0@#]/.test(text)) {
+        } else if (/[0@#!]/.test(text)) {
           fill = hilightColor;
         } else {
           dash = '.';
         }
 
-        var dot = /[@]/.test(text) ? '1' : /[#]/.test(text) ? '2' : '';
+        var dot = /[@]/.test(text) ? '1'
+                : /[#]/.test(text) ? '2'
+                : /[!]/.test(text) ? '3'
+                : '';
         draw_hex(fill, dash, wedge, dot, token.label);
       }
     }
-    paper.setSize(maxCx + dx + margin, maxCy + 2 * dy + margin);
-    where.width(maxCx + dx + margin).height(maxCy + 2 * dy + margin);
+    paper.setSize(maxCx + margin, maxCy + margin);
+    println("width: " + (maxCx+margin) + "; height: " + (maxCy+margin));//DEBUG
+    where.width(maxCx + margin).height(maxCy + margin);
 
     var s = '';
     var comma = '';
@@ -200,12 +209,23 @@
       if (/b/.test(wedge)) {
         Cx -= dx;
       }
-      if (Cx > maxCx) maxCx = Cx;
-      if (Cy > maxCy) maxCy = Cy;
       draw_hex_at(Cx, Cy, fill, stroke, wedge, dot);
       if (label && label !== '') {
         paper.text(Cx, Cy, label);
       }
+
+      var advanceX = /c/.test(wedge) ? 0 : dx;
+      var advanceY = /n/.test(wedge) ? 0 : 2 * dy;
+
+      if (Cx + advanceX > maxCx) {
+        maxCx = Cx + advanceX;
+        println("max x: "+maxCx);//DEBUG
+      }
+      if (Cy + advanceY > maxCy) {
+        maxCy = Cy + advanceY;
+        println("max y: "+maxCy); //DEBUG
+      }
+
       Cx += 2 * dx;
       if (/c/.test(wedge)) {
         Cx -= dx;
@@ -282,6 +302,8 @@
         paper.circle(x, y, r / 3).attr({fill: playerColor});
       } else if (dot === '2') {
         paper.circle(x, y, r / 6).attr({fill: playerColor});
+      } else if (dot === '3') {
+        paper.circle(x, y, r / 12).attr({fill: playerColor});
       }
       //                +                      <---+
       //               / \                         |
@@ -341,6 +363,10 @@
             str += c, ++i, c = source.charAt(i);
           }
           result.push(make('newline', str));
+        } else if (c == '[' && source.substr(i, 15) == "[SMALL-NEWLINE]") {
+          // A "small" newline (Cy += 2*dy rather than Cy += 3*dy)
+          str = "[SMALL-NEWLINE]", i+=15, c = source.charAt(i);
+          result.push(make('newline', str));
         } else if (c <= ' ') {
           // Ignore whitespace.
           ++i, c = source.charAt(i);
@@ -354,7 +380,7 @@
         } else if (c == 'c' || c == 'b' || c == 'u' || c == 'n' ||
                    (c >= '1' && c <= '9') ||
                    c == 'O' || c == '0' || c == '*' || c == '.' ||
-                   c == '@' || c == '#') {
+                   c == '@' || c == '#' || c == '!') {
           var allowUpDownModifier    = true;
           var allowLeftRightModifier = true;
           var allowFourWayModifier   = true;
@@ -407,21 +433,45 @@
 
   }
 
-  $(document).ready(function () {
-    var drawing, code, drawOnNoChange;
-    drawing = $('#draw');
-    code = $('#code');
+  function renderBoards(boards) {
+    var index = 0;
 
-    drawOnNoChange = new UpdateAfterInputPause(code, 100, function () {
-      drawBoard(drawing, code[0].value);
+    // Use callbacks to render each board seperately,
+    // so the browser can do it incrementally.
+    window.setTimeout(renderNextBoard, 0);
+    return;
+
+    function renderNextBoard() {
+      if (index < boards.length) {
+        var board = $(boards[index]);
+        var descr = board.context.innerText;
+        board.context.innerText = '';
+        drawBoard(board, descr);
+        //board.css('border', '1px dashed gray');
+        ++index;
+        window.setTimeout(renderNextBoard, 0);
+      }
+    }
+  }
+
+  $(document).ready(function () {
+    var drawing, program, monitor, renders, drawOnNoChange;
+    drawing = $('#draw');
+    program = $('#code');
+    monitor = $('#monitor');
+    //renders = $('pre.hex-board.hex-render');
+    //renders = $('table.hex-board.hex-render pre.board');
+
+    drawOnNoChange = new UpdateAfterInputPause(program, 100, function () {
+      drawBoard(drawing, program[0].value);
+      drawing.css('border', '2px solid orange');
     });
 
-    //drawOnNoChange.restart();
-    code.css('border', '3px solid green').css('font-family', 'monospace');
-    //code.keyup(function () { drawOnNoChange.restart() });
-    $('#monitor').
-        css('border', '2px solid blue').
-        css('font-family', 'monospace');
+    renderBoards($('table.hex-board.hex-render pre.board'));
+    renderBoards($('pre.hex-board.hex-render'));
+
+    program.css('border', '3px solid green').css('font-family', 'monospace');
+    monitor.css('border', '2px solid blue').css('font-family', 'monospace');
   });
 
 }());

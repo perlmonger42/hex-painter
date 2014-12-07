@@ -1,7 +1,12 @@
 <html>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  This is an attempt to create a page with a textbox, whose contents
-  can be edited to create an SVG image on the same page.
+  This page provides a textbox in which the user can type an ASCII
+  representation of a board configuration, and that board is immediately
+  rendered as an SVG picture of that board.
+
+  version 7: Any <pre> sections with class "hex-board" and class
+    "hex-render" are assumed to contain an ASCII board representation,
+    and are automatically replaced with an SVG rendering of that board.
   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <head>
     <meta charset="utf-8">
@@ -13,6 +18,16 @@
     <script id='mainJS' src="sample.js"></script>
     <style type="text/css">
       .honeycomb { font-family: "Amnesia Sans Mono", "monospace"; }
+      /*
+      pre.hex-board.hex-render, table.hex-board.hex-render {
+        border: 1px dashed gray;
+      }
+      td { border: 1px solid purple; }
+      */
+      td.label {
+        text-align: center;
+        font-size: x-large;
+      }
     </style>
     <script>
       $(document).ready(function () {
@@ -33,19 +48,26 @@
     </a>
     at <i>Hall of Hexagons</i>.
     <br>
-    <textarea id="code" class="honeycomb" rows=10 cols=120>
 
-  ub u u u u cu  _ _    OOOO---
-    . . * . .    _ _    -OOOO--  __  . .
-   b . O O . c   _ _    --OOOO-  __  -. .
-    _ \ ^ / _    _ _    ---OOOO
- 
+    <textarea id="code" class="honeycomb" rows=10 cols=120>
+[SMALL-NEWLINE]
+       ub u u u u cu  _ _    OOOO---
+         . . * . .    _ _    -OOOO--  __  . .
+        b . O O . c   _ _    --OOOO-  __  -. .
+         _ \ ^ / _    _ _    ---OOOO
+    </textarea>
+    <div id="draw"></div>  
+    <textarea id="monitor" rows=3 cols=120></textarea>  
+
+    <pre class="hex-board hex-render">
     u u u u u u u    _ _    u u u    _ _   bu u u uc
    b . . * 0 . . c   _ _   b . . c   _ _     . . .
     . . O 0 @ . .    _ _    . . .    _ _    b . . c
    b . O O 0 0 . c   _ _   b . . c   _ _     . . .
     _ \ ^ ^ ^ / _    _ _    n n n    _ _   bn n n nc
+    </pre>
 
+    <pre class="hex-board hex-render">
   ub u u u u u u cu  _ _   7 8 8 9   _ _     8 8 8
     . . . . . . .    _ _    . . .    _ _    4 . . 6
    b . . * . . . c   _ _   4 . . 6   _ _     . . .
@@ -53,7 +75,9 @@
    b . . @ . . . c   _ _   4 . . 6   _ _     . . .
     . . . . . . .    _ _    . . .    _ _    4 . . 6
   nb n n n n n n cn  _ _   1 2 2 3   _ _     2 2 2
+    </pre>
 
+    <pre class="hex-board hex-render">
   *7 *8 *8 *9  _  @7 @8 @8 @9   _  07 08 08 09  _  O7  O8  O8  O9
     .  .  .    _    .  .  .     _    .  .  .    _     .   .   .  
   *4 .  .  *6  _  @4 .  .  @6   _  04 .  .  06  _  O4   .   .  O6
@@ -61,7 +85,10 @@
   *4 .  .  *6  _  @4 .  .  @6   _  04 .  .  06  _  O4   .   .  O6
     .  .  .    _    .  .  .     _    .  .  .    _     .   .   .  
   *1 *2 *2 *3  _  @1 @2 @2 @3   _  01 02 02 03  _  O1  O2  O2  O3
+    </pre>
 
+    <pre class="hex-board hex-render">
+[SMALL-NEWLINE]
    O  *  0  *  0 * O
 
    O   bn O  bu O  uc O  nc O
@@ -75,193 +102,572 @@
    O  @nb O @ub O @cu O @cn O
 
    O  Obn O Obu O Ouc O Onc O
+    </pre>
 
-_ _ _ _ _ _ Second-row-templates
-    7 8 8 9
-     . * .
-    4 @ @ 6
-     \ ^ /
+<h2>Threats</h2>
 
-_ _ _ _ _ _ Third-row-templates
-_ _ _  8 8 8 8 8
-_ _ _ 4 . 0 * . 6
-_ _ _  . 0 0 0 . 
-_ _ _ 4 0 0 0 0 6
-_ _ _  \ ^ ^ ^ / _
- 8 8 8 8 8  _  8 8 8 8 8 
-4 . O * . 6 _ 4 . 0 * . 6
- . O O @ .  _  . @ 0 O .
-4 O O 0 0 6 _ 4 0 0 O O 6
- \ ^ ^ ^ /  _  \ ^ ^ ^ / _
+  <table class="hex-board hex-render">
+    <tr>
+      <td>
+        <table>
+          <tr><td><pre class="board">
+             8 8 8
+            4 . . 6
+             . * .
+            4 0{a} 0{a} 6
+             . @ .
+            - \ /
+          </pre></td></tr>
+          <tr><td align="center"><h3>Jab</h3></td></tr>
+        </table>
+      </td>
 
- _ _ _ _ _ _  8 8 8 8 8 8
- _ _ _ _ _ _ 4 . 0 * 0 . 6
- _ _ _ _ _ _  . 0 0 0 0 .
- _ _ _ _ _ _ 4 0 0 . 0 0 6
- _ _ _ _ _ _  \ ^ / \ ^ /
+      <td>
+        <table>
+          <tr><td><pre class="board">
+            7 8 8 9
+             . . .
+            4 * . 6
+             . @ .
+            4 0{a} 0{a} 6
+             \ ^ /
+          </pre></td></tr>
+          <tr><td align="center"><h3>Hook</h3></td></tr>
+        </table>
+      </td>
 
- _ _  8 8 8 8 8 8  _ _  8 8 8 8 8 8 
- _ _ 4 . 0 * O . 6 _ _ 4 . O * 0 . 6
- _ _  . @ 0 O O .  _ _  . O O 0 @ . 
- _ _ 4 0 0 . O O 6 _ _ 4 O O . 0 0 6
- _ _  \ ^ / \ ^ /  _ _  \ ^ / \ ^ /
+      <td>
+        <table>
+          <tr><td><pre class="board">
+            7 8 8 9
+             . * .
+            4 0{a} 0{a} 6
+             . @ .
+            4 0{b} 0{b} 6
+             \ ^ /
+          </pre></td></tr>
+          <tr><td align="center"><h3>Thrust</h3></td></tr>
+        </table>
+      </td>
 
- _ _ _ _  8 8 8 8 
- _ _ _ _ 4 . * . 6
- _ _ _ _  . 0 0 . 
- _ _ _ _ 4 . * . 6
- _ _ _ _  _ \ / _ 
+      <td>
+        <table>
+          <tr><td><pre class="board">
+           7 8 8 8 9
+            . . . .
+           4 * 0{a} . 6
+            . 0{a} @ .
+           4 . 0{b} 0{b} 6
+           - -\ ^ /
+          </pre></td></tr>
+          <tr><td align="center"><h3>Roundhouse</h3></td></tr>
+        </table>
+      </td>
+    </tr>
+  </table>
 
- _ _  8 8 8 8  _ _  8 8 8 8 
- _ _ 4 . * . 6 _ _ 4 . * . 6
- _ _  . @ O .  _ _  . O @ . 
- _ _ 4 . * . 6 _ _ 4 . * . 6
- _ _  _ \ / _  _ _  _ \ / _ 
+<h2>Second-row Virtual Connection Templates</h2>
 
-  _ _ _ _ _  8 8 8 8
-  _ _ _ _ _ 4 . * . 6
-  _ _ _ _ _  . 0 0 .
-  _ _ _ _ _ 4 0 0 * 6
-  _ _ _ _ _  \ ^ ^ / 
+  <table class="hex-board hex-render">
+    <tr>
+      <td colspan="2" align="center"><pre class="board">
+        7 8 8 9
+         . * .
+        4 0 0 6
+         \ ^ /
+      </pre></td>
+    </tr>
+    <tr>
+      <td colspan="2" align="center"><h3>Fork</h3></td>
+    </tr>
+  </table>
 
-  _ _  8 8 8 8   _ _  8 8 8 8
-  _ _ 4 . * . 6  _ _ 4 . * . 6
-  _ _  . @ O .   _ _  . O @ .
-  _ _ 4 0 0 * 6  _ _ 4 O O * 6
-  _ _  \ ^ ^ /   _ _  \ ^ ^ / 
 
-  _ _ _ _ _  8 8 8 8 9
-  _ _ _ _ _ 4 . 0 * .
-  _ _ _ _ _  . 0 0 * 6
-  _ _ _ _ _ 4 0 0 0 .
-  _ _ _ _ _  \ ^ ^ /  
+<h2>Third-row Virtual Connection Templates</h2>
 
-  _ _  8 8 8 8 9 _ _  8 8 8 8 9
-  _ _ 4 . 0 * .  _ _ 4 . O * . 
-  _ _  . @ 0 * 6 _ _  . O O * 6
-  _ _ 4 0 0 O .  _ _ 4 O O @ . 
-  _ _  \ ^ ^ / - _ _  \ ^ ^ /  
+  <table class="hex-board hex-render">
+    <tr><td colspan="2" class="label">Beehive</td></tr>
+    <tr>
+      <td colspan="2" align="center"><pre class="board">
+         8 8 8 8 8
+        4 . 0 * . 6
+         . 0 0 0 . 
+        4 0 0 0 0 6
+         \ ^ ^ ^ / _
+      </pre></td>
+    </tr>
+    <tr>
+      <td><pre class="board">
+         8 8 8 8 8 
+        4 . O * . 6
+         . O O @ . 
+        4 O O 0 0 6
+         \ ^ ^ ^ /
+      </pre></td>
+      <td><pre class="board">
+          8 8 8 8 8 
+         4 . 0 * . 6
+          . @ 0 O .
+         4 0 0 O O 6
+          \ ^ ^ ^ /
+      </pre></td>
+    </tr>
+  </table>
 
-_ _ _  8 8 8 8 8
-_ _ _ 4 . . * . 6
-_ _ _  . * 0 0 . 
-_ _ _ 4 0 0 0 0 6
-_ _ _  \ ^ ^ ^ / _
- 8 8 8 8 8  _  8 8 8 8 8 
-4 . . * . 6 _ 4 . . * . 6
- . * O @ .  _  . * @ O .
-4 O O 0 0 6 _ 4 0 0 O O 6
- \ ^ ^ ^ /  _  \ ^ ^ ^ / _
+  <hr />
 
-  _ _ _ _ _  7 8 8 8 8
-  _ _ _ _ _ . * * . 6 
-  _ _ _ _ _  4 0 0 0 .
-  _ _ _ _ _ . 0 0 0 6 
-  _ _ _ _ _ -\ ^ ^ / _
+  <table class="hex-board hex-render">
+    <tr><td colspan="2" class="label">Birdlet of Prey</td></tr>
+    <tr>
+      <td colspan="2" align="center"><pre class="board">
+         8 8 8 8 8 8
+        4 . 0 * 0 . 6
+         . 0 0 0 0 .
+        4 0 0 . 0 0 6
+         \ ^ / \ ^ /
+       </pre></td>
+     </tr>
+     <tr>
+      <td><pre class="board">
+         8 8 8 8 8 8 
+        4 . 0 * O . 6
+         . @ 0 O O . 
+        4 0 0 . O O 6
+         \ ^ / \ ^ / 
+      </pre></td>
+      <td><pre class="board">
+         8 8 8 8 8 8 
+        4 . O * 0 . 6
+         . O O 0 @ . 
+        4 O O . 0 0 6
+         \ ^ / \ ^ /
+    </tr>
+  </table>
 
-  _ _ 7 8 8 8 8   _ _  7 8 8 8 8
-  _ _  . * * . 6  _ _   . * * . 6 
-  _ _ 4 0 0 O .   _ _  4 O O @ .
-  _ _  . @ O O 6  _ _   . O 0 0 6 
-  _ _ - \ ^ ^ /   _ _  - \ ^ ^ / _
+  <hr />
 
- _ _ _ _ _ _ _ _  7 8 8 8 8 8 8 
- _ _ _ _ _ _ _ _   . * 0 * 0 . 6
- _ _ _ _ _ _ _ _  4 0 0 0 0 0 . 
- _ _ _ _ _ _ _ _   . 0 0 0 0 0 6
- _ _ _ _ _ _ _ _  - \ ^ ^ ^ ^ / 
+  <table class="hex-board hex-render">
+    <tr><td colspan="2" class="label">2/3/3</td></tr>
+    <tr>
+      <td colspan="2" align="center"><pre class="board">
+         8 8 8 8 9
+        4 . 0 * .
+        . 0 0 * 6
+        4 0 0 0 .
+         \ ^ ^ /  
+       </pre></td>
+     </tr>
+     <tr>
+      <td><pre class="board">
+         8 8 8 8 9
+        4 . 0 * . 
+         . @ 0 * 6
+        4 0 0 O . 
+         \ ^ ^ / -
+      </pre></td>
+      <td><pre class="board">
+         8 8 8 8 9
+        4 . O * . 
+         . O O * 6
+        4 O O @ . 
+         \ ^ ^ /  
+      </pre></td>
+    </tr>
+  </table>
+
+  <hr />
+
+  <table class="hex-board hex-render">
+    <tr><td colspan="2" class="label">1/2/3</td></tr>
+    <tr>
+      <td colspan="2" align="center"><pre class="board">
+         8 8 8 8
+        4 . * . 6
+         . 0 0 .
+        4 0 0 * 6
+         \ ^ ^ / 
+       </pre></td>
+     </tr>
+     <tr>
+      <td><pre class="board">
+         8 8 8 8 
+        4 . * . 6
+         . @ O . 
+        4 0 0 * 6
+         \ ^ ^ / 
+      </pre></td>
+      <td><pre class="board">
+         8 8 8 8
+        4 . * . 6
+         . O @ .
+        4 O O * 6
+         \ ^ ^ / 
+      </pre></td>
+    </tr>
+  </table>
+
+  <hr />
+
+  <table class="hex-board hex-render">
+    <tr><td colspan="2" class="label">1/3/4</td></tr>
+    <tr>
+      <td colspan="2" align="center"><pre class="board">
+         8 8 8 8 8
+        4 . . * . 6
+         . * 0 0 . 
+        4 0 0 0 0 6
+         \ ^ ^ ^ / _
+       </pre></td>
+     </tr>
+     <tr>
+      <td><pre class="board">
+         8 8 8 8 8 
+        4 . . * . 6
+         . * O @ . 
+        4 O O 0 0 6
+         \ ^ ^ ^ / 
+      </pre></td>
+      <td><pre class="board">
+         8 8 8 8 8 
+        4 . . * . 6
+         . * @ O .
+        4 0 0 O O 6
+         \ ^ ^ ^ / _
+      </pre></td>
+    </tr>
+  </table>
+
+  <hr />
+
+  <table class="hex-board hex-render">
+    <tr><td colspan="2" class="label">2/3/3</td></tr>
+    <tr>
+      <td colspan="2" align="center"><pre class="board">
+         7 8 8 8 8
+        . * * . 6 
+         4 0 0 0 .
+        . 0 0 0 6 
+        -\ ^ ^ / _
+       </pre></td>
+     </tr>
+     <tr>
+      <td><pre class="board">
+        7 8 8 8 8 
+         . * * . 6
+        4 0 0 O . 
+         . @ O O 6
+        - \ ^ ^ / 
+      </pre></td>
+      <td><pre class="board">
+        7 8 8 8 8
+         . * * . 6 
+        4 O O @ .
+         . O 0 0 6 
+        - \ ^ ^ / _
+      </pre></td>
+    </tr>
+  </table>
+
+  <hr />
+
+  <table class="hex-board hex-render">
+    <tr><td colspan="2" class="label">4/5/5</td></tr>
+    <tr>
+      <td colspan="2" align="center"><pre class="board">
+        7 8 8 8 8 8 8 
+         . * 0 * 0 . 6
+        4 0 0 0 0 0 . 
+         . 0 0 0 0 0 6
+        - \ ^ ^ ^ ^ / 
+       </pre></td>
+     </tr>
+     <tr>
+      <td><pre class="board">
+        7 8 8 8 8 8 8 
+         . * O * O . 6
+        4 0 0 O O O . 
+         . @ O O O O 6
+        - \ ^ ^ ^ ^ / 
+      </pre></td>
+      <td><pre class="board">
+        7 8 8 8 8 8 8 
+         . * @ * 0 . 6
+        4 O O # 0 # . 
+         . O 0 0 0 0 6
+        - \ ^ ^ ^ ^ / 
+      </pre></td>
+    </tr>
+  </table>
+
+<h2>Fourth-row Templates</h2>
+
+  <table class="hex-board hex-render">
+    <tr><td colspan="3" class="label">Mountain</td></tr>
+    <tr>
+      <td colspan="3" align="center"><pre class="board">
+        7 8 8 8 8 8 8 8 9
+         . . . * 0 . . .
+        4 . 0 0 0 0 0 . 6
+         . 0 0 0 0 0 0 .
+        4 0 0 0 0 0 0 0 6
+         \ ^ ^ ^ ^ ^ ^ /
+      </pre></td>
+    </tr>
+    <tr>
+      <td><pre class="board">
+        7 8 8 8 8 8 8 8 9
+         . . . * O . . . 
+        4 . 0 @ O O O . 6
+         . 0 0 0 O O O . 
+        4 0 0 0 0 O O O 6
+         \ ^ ^ ^ ^ ^ ^ / 
+      </pre></td>
+      <td><pre class="board">
+        7 8 8 8 8 8 8 8 9
+         . . . * 0 . . . 
+        4 . O O 0 @ 0 . 6
+         . O O O 0 0 0 . 
+        4 O O O 0 0 0 0 6
+         \ ^ ^ ^ ^ ^ ^ / 
+      </pre></td>
+      <td><pre class="board">
+        7 8 8 8 8 8 8 8 9
+          . . . * O . . .
+        4 . O 0 @ 0 O . 6
+          . O # 0 0 # O .
+        4 O 0 0 O 0 0 O 6
+         \ ^ ^ ^ ^ ^ ^ /
+      </pre></td>
+    </tr>
+  </table>
+
+  <hr />
+
+  <table class="hex-board hex-render">
+    <tr><td colspan="2" class="label">Bird of Prey</td></tr>
+    <tr>
+      <td colspan="2" align="center"><pre class="board">
+        7 8 8 8 8 8 8 8 8 9
+         . . . 0 * 0 . . .
+        4 . 0 0 0 0 0 0 . 6
+         . 0 0 0 . 0 0 0 .
+        4 0 0 0 0 0 0 0 0 6
+         \ ^ ^ ^ ^ ^ ^ ^ / 
+      </pre></td>
+    </tr>
+    <tr>
+      <td><pre class="board">
+        7 8 8 8 8 8 8 8 8 9
+         . . . 0 * O . . . 
+        4 . 0 @ 0 O O O . 6
+         . # 0 # . O O O . 
+        4 0 0 0 0 O O O O 6
+         \ ^ ^ ^ ^ ^ ^ ^ / 
+      </pre></td>
+      <td><pre class="board">
+        7 8 8 8 8 8 8 8 8 9
+         . . . O * 0 . . . 
+        4 . O O O 0 @ 0 . 6
+         . O O O . # 0 # . 
+        4 O O O O 0 0 0 0 6
+         \ ^ ^ ^ ^ ^ ^ ^ / 
+      </pre></td>
+    </tr>
+  </table>
+
+  <hr />
+
+  <table class="hex-board hex-render">
+    <tr><td colspan="4" class="label">1/2/3/4</td></tr>
+    <tr>
+      <td colspan="4" align="center"><pre class="board">
+        7 8 8 8 8 9
+         . . * . .
+        4 . 0 0 . 6
+         . * 0 0 . 
+        4 0 0 0 0 6
+         \ ^ ^ ^ / 
+       </pre></td>
+     </tr>
+     <tr>
+      <td><pre class="board">
+        7 8 8 8 8 9
+         . . * . . 
+        4 . @ O . 6
+         . * O O . 
+        4 0 0 O O 6
+        \ ^ ^ ^ /  
+      </pre></td>
+      <td><pre class="board">
+        7 8 8 8 8 9
+         . . * . . 
+        4 . 0 0 . 6
+         . * @ O . 
+        4 O 0 0 O 6
+        \ ^ ^ ^ /  
+      </pre></td>
+      <td><pre class="board">
+        7 8 8 8 8 9
+        . . * . . 
+        4 . O @ . 6
+        . * # # . 
+        4 0 0 0 0 6
+        \ ^ ^ ^ /  
+      </pre></td>
+      <td><pre class="board">
+        7 8 8 8 8 9 _ _ 
+         . . * . .  _ _ 
+        4 . # # . 6 _ _ 
+         . * ! @ .  _ _ 
+        4 ! O 0 0 6 _ _ 
+        \ ^ ^ ^ /   _ _
+      </pre></td>
+    </tr>
+  </table>
+
+  <hr />
+
+  <table class="hex-board hex-render">
+    <tr><td colspan="4" class="label">2/3/3/4</td></tr>
+    <tr>
+      <td colspan="4" align="center"><pre class="board">
+        7 8 8 8 8 9 _ 
+         . * * . .  _ 
+        4 0 0 0 . 6 _ 
+         . 0 0 0 .  _ 
+        4 0 0 0 0 6 _ 
+         \ ^ ^ ^ /  _ 
+       </pre></td>
+     </tr>
+     <tr>
+      <td><pre class="board">
+        7 8 8 8 8 9
+         . * * . . 
+        4 0 0 O . 6
+         . @ O O . 
+        4 0 0 O O 6
+         \ ^ ^ ^ / 
+      </pre></td>
+      <td><pre class="board">
+        7 8 8 8 8 9
+         . * * . . 
+        4 O 0 0 . 6
+         . O @ O . 
+        4 O 0 0 O 6
+         \ ^ ^ ^ / 
+      </pre></td>
+      <td><pre class="board">
+        7 8 8 8 8 9
+         . * * . . 
+        4 0 0 # . 6
+         . # 0 @ . 
+        4 0 O 0 0 6
+         \ ^ ^ ^ / 
+      </pre></td>
+      <td><pre class="board">
+        7 8 8 8 8 9 _ 
+         . * * . .  _ 
+        4 0{x} O @ . 6 _ 
+         . # 0{x} # .  _ 
+        4 0 0 0 0 6 _ 
+         \ ^ ^ ^ /  _ 
+      </pre></td>
+    </tr>
+  </table>
+
+  <hr />
+
+  <table class="hex-board hex-render">
+    <tr><td colspan="4" class="label">2/3/4/2-2</td></tr>
+    <tr>
+      <td colspan="2" align="center"><pre class="board">
+        7 8 8 8 8 8 9
+         . . 0 * . . 
+        4 . 0 0 0 . 6
+         . 0 0 0 0 . 
+        4 0 0 * 0 0 6
+         \ ^ ^ ^ ^ / _
+       </pre></td>
+     </tr>
+     <tr>
+      <td><pre class="board">
+        7 8 8 8 8 8 9
+         . . 0 * . . 
+        4 . @ 0 O . 6
+         . # # O O . 
+        4 0 0 * O O 6
+         \ ^ ^ ^ ^ / 
+      </pre></td>
+      <td><pre class="board">
+        7 8 8 8 8 8 9
+         . . O * . . 
+        4 . O O @ . 6
+         . O O # # . 
+        4 O O * 0 0 6
+         \ ^ ^ ^ ^ / 
+      </pre></td>
+    </tr>
+  </table>
  
+  <hr />
 
- _ _ 7 8 8 8 8 8 8  _ _ 7 8 8 8 8 8 8 
- _ _  . * O * O . 6 _ _  . * @ * 0 . 6
- _ _ 4 0 0 O O O .  _ _ 4 O O # 0 # . 
- _ _  . @ O O O O 6 _ _  . O 0 0 0 0 6
- _ _ - \ ^ ^ ^ ^ /  _ _ - \ ^ ^ ^ ^ / 
+    <table class="hex-board hex-render">
+      <tr><td colspan="4" class="label">2/3/4/4</td></tr>
+      <tr>
+        <td colspan="4" align="center"><pre class="board">
+          7 8 8 8 8 8 9
+           . . 0 * . . 
+          4 . 0 0 0 . 6
+           . 0 0 0 0 . 
+          4 . * 0 0 0 6
+           \ ^ ^ ^ ^ / _
+         </pre></td>
+       </tr>
+       <tr>
+        <td><pre class="board">
+          7 8 8 8 8 8 9
+           . . 0 * . . 
+          4 . @ 0 O . 6
+           . 0 0 O O . 
+          4 . * O O O 6
+           \ ^ ^ ^ ^ / 
+        </pre></td>
+        <td><pre class="board">
+          7 8 8 8 8 8 9
+           . . O * . . 
+          4 . O 0 0 . 6
+           . O O @ O . 
+          4 . * 0 0 O 6
+           \ ^ ^ ^ ^ / 
+        </pre></td>
+        <td><pre class="board">
+          7 8 8 8 8 8 9
+           . . O * . . 
+          4 . O O @ . 6
+           . O 0 # # . 
+          4 . * 0 0 0 6
+           \ ^ ^ ^ ^ / 
+        </pre></td>
+      </tr>
+    </table>
 
-_ _ _ _ _ _ Fourth-row-templates
-  _ _ _ _ _ _ _ _ _ 7 8 8 8 8 8 8 8 9
-  _ _ _ _ _ _ _ _ _  . . . * 0 . . .
-  _ _ _ _ _ _ _ _ _ 4 . 0 0 0 0 0 . 6
-  _ _ _ _ _ _ _ _ _  . 0 0 0 0 0 0 .
-  _ _ _ _ _ _ _ _ _ 4 0 0 0 0 0 0 0 6
-  _ _ _ _ _ _ _ _ _  \ ^ ^ ^ ^ ^ ^ /
+    <hr />
+
+    <pre class="hex-board hex-render">
+    _ _ _ _ _ _    _    7 8 8 8 8 8 9
+    _ _ _ _ _ _    _     . . 0 * . . 
+    _ _ _ _ _ _    _    4 . 0 0 0 . 6
+    _ _ _ _ _ _    _     . 0 0 0 0 . 
+    _ _ _ _ _ _    _    4 . * 0 0 0 6
+    _ _ _ _ _ _    _     \ ^ ^ ^ ^ / _
+
+  7 8 8 8 8 8 9    _    7 8 8 8 8 8 9    _    7 8 8 8 8 8 9
+   . . 0 * . .     _     . . O * . .     _     . . O * . . 
+  4 . @ 0 O . 6    _    4 . O 0 0 . 6    _    4 . O O @ . 6
+   . 0 0 O O .     _     . O O @ O .     _     . O 0 # # . 
+  4 . * O O O 6    _    4 . * 0 0 O 6    _    4 . * 0 0 0 6
+   \ ^ ^ ^ ^ /     _     \ ^ ^ ^ ^ /     _     \ ^ ^ ^ ^ / 
+    </pre>
  
-  7 8 8 8 8 8 8 8 9 _  7 8 8 8 8 8 8 8 9 _  7 8 8 8 8 8 8 8 9
-   . . . * O . . .  _   . . . * 0 . . .  _   . . . * O . . .
-  4 . 0 @ O O O . 6 _  4 . O O 0 @ 0 . 6 _  4 . O 0 @ 0 O . 6
-   . 0 0 0 O O O .  _   . O O O 0 0 0 .  _   . O # 0 0 # O .
-  4 0 0 0 0 O O O 6 _  4 O O O 0 0 0 0 6 _  4 O 0 0 O 0 0 O 6
-   \ ^ ^ ^ ^ ^ ^ /  _   \ ^ ^ ^ ^ ^ ^ /  _   \ ^ ^ ^ ^ ^ ^ /
-
- _ _ _ _ _ _ _ _ 7 8 8 8 8 8 8 8 8 9
- _ _ _ _ _ _ _ _  . . . 0 * 0 . . .
- _ _ _ _ _ _ _ _ 4 . 0 0 0 0 0 0 . 6
- _ _ _ _ _ _ _ _  . 0 0 0 . 0 0 0 .
- _ _ _ _ _ _ _ _ 4 0 0 0 0 0 0 0 0 6
- _ _ _ _ _ _ _ _  \ ^ ^ ^ ^ ^ ^ ^ / 
- 
-
- _ _ 7 8 8 8 8 8 8 8 8 9 _ _ 7 8 8 8 8 8 8 8 8 9
- _ _  . . . 0 * O . . .  _ _  . . . O * 0 . . . 
- _ _ 4 . 0 @ 0 O O O . 6 _ _ 4 . O O O 0 @ 0 . 6
- _ _  . # 0 # . O O O .  _ _  . O O O . # 0 # . 
- _ _ 4 0 0 0 0 O O O O 6 _ _ 4 O O O O 0 0 0 0 6
- _ _  \ ^ ^ ^ ^ ^ ^ ^ /  _ _  \ ^ ^ ^ ^ ^ ^ ^ / 
-
-- _ _ _ _ - _ - _ _ -7 8 8 8 8 9
- _ _ _ _ _  _  _ _ _  . . * . .
-- _ _ _ _ - _ - _ _ -4 . 0 0 . 6
- _ _ _ _ _  _  _ _ _  . * 0 0 . 
-- _ _ _ _ - _ - _ _ -4 0 0 0 0 6
- _ _ _ _ _  _  _ _ _  \ ^ ^ ^ / 
-7 8 8 8 8 9 _ 7 8 8 8 8 9 _ 7 8 8 8 8 9 _ 7 8 8 8 8 9 _ _ 
- . . * . .  _  . . * . .  _  . . * . .  _  . . * . .  _ _ 
-4 . @ O . 6 _ 4 . 0 0 . 6 _ 4 . O @ . 6 _ 4 . # # . 6 _ _ 
- . * O O .  _  . * @ O .  _  . * # # .  _  . * 0 @ .  _ _ 
-4 0 0 O O 6 _ 4 O 0 0 O 6 _ 4 0 0 0 0 6 _ 4 0 O 0 0 6 _ _ 
-\ ^ ^ ^ /   _ \ ^ ^ ^ /   _ \ ^ ^ ^ /   _ \ ^ ^ ^ /   _ _
-
-- _ _ _ _ - _ - _ _ -7 8 8 8 8 9 _ 
- _ _ _ _ _  _  _ _ _  . * * . .  _ 
-- _ _ _ _ - _ - _ _ -4 0 0 0 . 6 _ 
- _ _ _ _ _  _  _ _ _  . 0 0 0 .  _ 
-- _ _ _ _ - _ - _ _ -4 0 0 0 0 6 _ 
- _ _ _ _ _  _  _ _ _  \ ^ ^ ^ /  _ 
-7 8 8 8 8 9 _ 7 8 8 8 8 9 _ 7 8 8 8 8 9 _ 7 8 8 8 8 9 _ 
- . * * . .  _  . * * . .  _  . * * . .  _  . * * . .  _ 
-4 0 0 O . 6 _ 4 O 0 0 . 6 _ 4 0 0 # . 6 _ 4 0{x} O @ . 6 _ 
- . @ O O .  _  . O @ O .  _  . # 0 @ .  _  . # 0{x} # .  _ 
-4 0 0 O O 6 _ 4 O 0 0 O 6 _ 4 0 O 0 0 6 _ 4 0 0 0 0 6 _ 
- \ ^ ^ ^ /  _  \ ^ ^ ^ /  _  \ ^ ^ ^ /  _  \ ^ ^ ^ /  _ 
-
-_ _ _     7 8 8 8 8 8 9
-_ _ _      . . 0 * . . 
-_ _ _     4 . 0 0 0 . 6
-_ _ _      . 0 0 0 0 . 
-_ _ _     4 0 0 * 0 0 6
-_ _ _      \ ^ ^ ^ ^ / _
-7 8 8 8 8 8 9    _    7 8 8 8 8 8 9
- . . 0 * . .     _     . . O * . . 
-4 . @ 0 O . 6    _    4 . O O @ . 6
- . # # O O .     _     . O O # # . 
-4 0 0 * O O 6    _    4 O O * 0 0 6
- \ ^ ^ ^ ^ /     _     \ ^ ^ ^ ^ / 
- 
-_ _ _ _ _ _ _     7 8 8 8 8 8 9
-_ _ _ _ _ _ _      . . 0 * . . 
-_ _ _ _ _ _ _     4 . 0 0 0 . 6
-_ _ _ _ _ _ _      . 0 0 0 0 . 
-_ _ _ _ _ _ _     4 . * 0 0 0 6
-_ _ _ _ _ _ _      \ ^ ^ ^ ^ / _
-7 8 8 8 8 8 9    _    7 8 8 8 8 8 9    _    7 8 8 8 8 8 9
- . . 0 * . .     _     . . O * . .     _     . . O * . . 
-4 . @ 0 O . 6    _    4 . O 0 0 . 6    _    4 . O O @ . 6
- . 0 0 O O .     _     . O O @ O .     _     . O 0 # # . 
-4 . * O O O 6    _    4 . * 0 0 O 6    _    4 . * 0 0 0 6
- \ ^ ^ ^ ^ /     _     \ ^ ^ ^ ^ /     _     \ ^ ^ ^ ^ / 
- 
-    </textarea>  
-    <div id="draw"></div>  
-    <textarea id="monitor" rows=10 cols=120></textarea>  
   </body>  
 </html>  
