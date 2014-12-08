@@ -3,21 +3,15 @@
   This page provides a textbox in which the user can type an ASCII
   representation of a board configuration, and that board is immediately
   rendered as an SVG picture of that board.
-
-  version 7: Any <pre> sections with class "hex-board" and class
-    "hex-render" are assumed to contain an ASCII board representation,
-    and are automatically replaced with an SVG rendering of that board.
-  version 8: Added more templates. Added '%' symbol, meaning 'opponent
-    owns this cell.
   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <head>
     <meta charset="utf-8">
-    <title>Edit and See</title>
+    <title>Hex Board Editor</title>
     <!-- <link rel="stylesheet" href="demo.css" media="screen">  -->
     <!-- <link rel="stylesheet" href="demo-print.css" media="print">  -->
     <script src="jquery-1.7.2.min.js"></script>
     <script src="raphael-min.js"></script>
-    <script id='mainJS' src="sample.js"></script>
+    <script id='mainJS' src="hex-board.js"></script>
     <style type="text/css">
       .honeycomb { font-family: "Amnesia Sans Mono", "monospace"; }
       /*
@@ -29,6 +23,18 @@
       td.label {
         text-align: center;
         font-size: x-large;
+      }
+      td.token {
+        text-align: center;
+        font-size: large;
+      }
+      table.vocabulary, table.example {
+        border-spacing: 0px;
+        border-collapse: collapse;
+        border: 1px solid gray;
+      }
+      table.vocabulary, table.vocabulary td, table.vocabulary th {
+        border: 1px solid gray;
       }
     </style>
     <script>
@@ -43,1067 +49,429 @@
     </script>
   </head>  
   <body>  
-    Hex Board<br>
-    See the
-    <a href="http://www.drking.org.uk/hexagons/hex/templates.html">
-      Hex Templates
-    </a>
-    at <i>Hall of Hexagons</i>.
-    <br>
+  <h1>The Hex Board Editor</h1>
 
+    <p>
+    The text below is rendered by hex-board.js into the
+    orange-bordered picture that follows.
+    You may edit this text, and the picture
+    will automatically update to reflect your changes.
+    </p>
+
+    <!--
+      textarea#code, div#draw, and textarea#monitor are handled specially my
+      hex-board.js: the source code in textarea#code is rendered as SVG into
+      div#draw, with debugging information printed into textarea#monitor, and
+      changes to texarea#code cause the picture to be immediately regenerated.
+    -->
     <textarea id="code" class="honeycomb" rows=10 cols=120>
-[SMALL-NEWLINE]
-       ub u u u u cu  _ _    OOOO---
-         . . * . .    _ _    -OOOO--  __  . .
-        b . O O . c   _ _    --OOOO-  __  -. .
-         _ \ ^ / _    _ _    ---OOOO
+[SMALL-NEWLINE]                                 
+       ub u u u u cu  _ _    OOOO---            
+         . . * . .    _ _    -OOOO--  __  . .   
+        b . O O . c   _ _    --OOOO-  __  -. .  
+         _ \ ^ / _    _ _    ---OOOO            
     </textarea>
+    <br>
     <div id="draw"></div>  
+    <br>
     <textarea id="monitor" rows=3 cols=120></textarea>  
 
-    <pre class="hex-board hex-render">
-    u u u u u u u    _ _    u u u    _ _   bu u u uc
-   b . . * 0 . . c   _ _   b . . c   _ _     . . .
-    . . O 0 @ . .    _ _    . . .    _ _    b . . c
-   b . O O 0 0 . c   _ _   b . . c   _ _     . . .
-    _ \ ^ ^ ^ / _    _ _    n n n    _ _   bn n n nc
-    </pre>
 
-    <pre class="hex-board hex-render">
-  ub u u u u u u cu  _ _   7 8 8 9   _ _     8 8 8
-    . . . . . . .    _ _    . . .    _ _    4 . . 6
-   b . . * . . . c   _ _   4 . . 6   _ _     . . .
-    . 0 . . O . .    _ _    . . .    _ _    4 . . 6
-   b . . @ . . . c   _ _   4 . . 6   _ _     . . .
-    . . . . . . .    _ _    . . .    _ _    4 . . 6
-  nb n n n n n n cn  _ _   1 2 2 3   _ _     2 2 2
-    </pre>
-
-    <pre class="hex-board hex-render">
-  *7 *8 *8 *9  _  @7 @8 @8 @9   _  07 08 08 09  _  O7  O8  O8  O9
-    .  .  .    _    .  .  .     _    .  .  .    _     .   .   .  
-  *4 .  .  *6  _  @4 .  .  @6   _  04 .  .  06  _  O4   .   .  O6
-    .  .  .    _    .  .  .     _    .  .  .    _     .   .   .  
-  *4 .  .  *6  _  @4 .  .  @6   _  04 .  .  06  _  O4   .   .  O6
-    .  .  .    _    .  .  .     _    .  .  .    _     .   .   .  
-  *1 *2 *2 *3  _  @1 @2 @2 @3   _  01 02 02 03  _  O1  O2  O2  O3
-    </pre>
-
-    <pre class="hex-board hex-render">
-[SMALL-NEWLINE]
-   O  *  0  *  0 * O
-
-   O   bn O  bu O  uc O  nc O
-
-   O  .bn O .bu O .uc O .nc O
- 
-   O  *bn O *bu O *uc O *nc O
-
-   O  0nb O 0ub O 0cu O 0cn O
-
-   O  @nb O @ub O @cu O @cn O
-
-   O  Obn O Obu O Ouc O Onc O
-    </pre>
-
-<h2>Threats</h2>
-
-  <table class="hex-board hex-render">
-    <tr>
-      <td>
-        <table>
-          <tr><td><pre class="board">
-             8 8 8
-            4 . . 6
-             . * .
-            4 0{a} 0{a} 6
-             . @ .
-            - \ /
-          </pre></td></tr>
-          <tr><td align="center"><h3>Jab</h3></td></tr>
-        </table>
-      </td>
-
-      <td>
-        <table>
-          <tr><td><pre class="board">
-            7 8 8 9
-             . . .
-            4 * . 6
-             . @ .
-            4 0{a} 0{a} 6
-             \ ^ /
-          </pre></td></tr>
-          <tr><td align="center"><h3>Hook</h3></td></tr>
-        </table>
-      </td>
-
-      <td>
-        <table>
-          <tr><td><pre class="board">
-            7 8 8 9
-             . * .
-            4 0{a} 0{a} 6
-             . @ .
-            4 0{b} 0{b} 6
-             \ ^ /
-          </pre></td></tr>
-          <tr><td align="center"><h3>Thrust</h3></td></tr>
-        </table>
-      </td>
-
-      <td>
-        <table>
-          <tr><td><pre class="board">
-           7 8 8 8 9
-            . . . .
-           4 * 0{a} . 6
-            . 0{a} @ .
-           4 . 0{b} 0{b} 6
-           - -\ ^ /
-          </pre></td></tr>
-          <tr><td align="center"><h3>Roundhouse</h3></td></tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-
-<h2>Second-row Virtual Connection Templates</h2>
-
-  <table class="hex-board hex-render">
-    <tr>
-      <td colspan="2" align="center"><pre class="board">
-        7 8 8 9
-         . * .
-        4 0 0 6
-         \ ^ /
-      </pre></td>
-    </tr>
-    <tr>
-      <td colspan="2" align="center"><h3>Fork</h3></td>
-    </tr>
-  </table>
-
-
-<h2>Third-row Virtual Connection Templates</h2>
-
-  <table class="hex-board hex-render">
-    <tr><td colspan="2" class="label">Beehive</td></tr>
-    <tr>
-      <td colspan="2" align="center"><pre class="board">
-         8 8 8 8 8
-        4 . 0 * . 6
-         . 0 0 0 . 
-        4 0 0 0 0 6
-         \ ^ ^ ^ / _
-      </pre></td>
-    </tr>
-    <tr>
-      <td><pre class="board">
-         8 8 8 8 8 
-        4 . O * . 6
-         . O O @ . 
-        4 O O 0 0 6
-         \ ^ ^ ^ /
-      </pre></td>
-      <td><pre class="board">
-          8 8 8 8 8 
-         4 . 0 * . 6
-          . @ 0 O .
-         4 0 0 O O 6
-          \ ^ ^ ^ /
-      </pre></td>
-    </tr>
-  </table>
-
-  <hr />
-
-  <table class="hex-board hex-render">
-    <tr><td colspan="2" class="label">Birdlet of Prey</td></tr>
-    <tr>
-      <td colspan="2" align="center"><pre class="board">
-         8 8 8 8 8 8
-        4 . 0 * 0 . 6
-         . 0 0 0 0 .
-        4 0 0 . 0 0 6
-         \ ^ / \ ^ /
-       </pre></td>
-     </tr>
-     <tr>
-      <td><pre class="board">
-         8 8 8 8 8 8 
-        4 . 0 * O . 6
-         . @ 0 O O . 
-        4 0 0 . O O 6
-         \ ^ / \ ^ / 
-      </pre></td>
-      <td><pre class="board">
-         8 8 8 8 8 8 
-        4 . O * 0 . 6
-         . O O 0 @ . 
-        4 O O . 0 0 6
-         \ ^ / \ ^ /
-    </tr>
-  </table>
-
-  <hr />
-
-  <table class="hex-board hex-render">
-    <tr><td colspan="2" class="label">2/3/3</td></tr>
-    <tr>
-      <td colspan="2" align="center"><pre class="board">
-         8 8 8 8 9
-        4 . 0 * .
-        . 0 0 * 6
-        4 0 0 0 .
-         \ ^ ^ /  
-       </pre></td>
-     </tr>
-     <tr>
-      <td><pre class="board">
-         8 8 8 8 9
-        4 . 0 * . 
-         . @ 0 * 6
-        4 0 0 O . 
-         \ ^ ^ / -
-      </pre></td>
-      <td><pre class="board">
-         8 8 8 8 9
-        4 . O * . 
-         . O O * 6
-        4 O O @ . 
-         \ ^ ^ /  
-      </pre></td>
-    </tr>
-  </table>
-
-  <hr />
-
-  <table class="hex-board hex-render">
-    <tr><td colspan="2" class="label">1/2/3</td></tr>
-    <tr>
-      <td colspan="2" align="center"><pre class="board">
-         8 8 8 8
-        4 . * . 6
-         . 0 0 .
-        4 0 0 * 6
-         \ ^ ^ / 
-       </pre></td>
-     </tr>
-     <tr>
-      <td><pre class="board">
-         8 8 8 8 
-        4 . * . 6
-         . @ O . 
-        4 0 0 * 6
-         \ ^ ^ / 
-      </pre></td>
-      <td><pre class="board">
-         8 8 8 8
-        4 . * . 6
-         . O @ .
-        4 O O * 6
-         \ ^ ^ / 
-      </pre></td>
-    </tr>
-  </table>
-
-  <hr />
-
-  <table class="hex-board hex-render">
-    <tr><td colspan="2" class="label">1/3/4</td></tr>
-    <tr>
-      <td colspan="2" align="center"><pre class="board">
-         8 8 8 8 8
-        4 . . * . 6
-         . * 0 0 . 
-        4 0 0 0 0 6
-         \ ^ ^ ^ / _
-       </pre></td>
-     </tr>
-     <tr>
-      <td><pre class="board">
-         8 8 8 8 8 
-        4 . . * . 6
-         . * O @ . 
-        4 O O 0 0 6
-         \ ^ ^ ^ / 
-      </pre></td>
-      <td><pre class="board">
-         8 8 8 8 8 
-        4 . . * . 6
-         . * @ O .
-        4 0 0 O O 6
-         \ ^ ^ ^ / _
-      </pre></td>
-    </tr>
-  </table>
-
-  <hr />
-
-  <table class="hex-board hex-render">
-    <tr><td colspan="2" class="label">2/3/3</td></tr>
-    <tr>
-      <td colspan="2" align="center"><pre class="board">
-         7 8 8 8 8
-        . * * . 6 
-         4 0 0 0 .
-        . 0 0 0 6 
-        -\ ^ ^ / _
-       </pre></td>
-     </tr>
-     <tr>
-      <td><pre class="board">
-        7 8 8 8 8 
-         . * * . 6
-        4 0 0 O . 
-         . @ O O 6
-        - \ ^ ^ / 
-      </pre></td>
-      <td><pre class="board">
-        7 8 8 8 8
-         . * * . 6 
-        4 O O @ .
-         . O 0 0 6 
-        - \ ^ ^ / _
-      </pre></td>
-    </tr>
-  </table>
-
-  <hr />
-
-  <table class="hex-board hex-render">
-    <tr><td colspan="2" class="label">4/5/5</td></tr>
-    <tr>
-      <td colspan="2" align="center"><pre class="board">
-        7 8 8 8 8 8 8 
-         . * 0 * 0 . 6
-        4 0 0 0 0 0 . 
-         . 0 0 0 0 0 6
-        - \ ^ ^ ^ ^ / 
-       </pre></td>
-     </tr>
-     <tr>
-      <td><pre class="board">
-        7 8 8 8 8 8 8 
-         . * O * O . 6
-        4 0 0 O O O . 
-         . @ O O O O 6
-        - \ ^ ^ ^ ^ / 
-      </pre></td>
-      <td><pre class="board">
-        7 8 8 8 8 8 8 
-         . * @ * 0 . 6
-        4 O O # 0 # . 
-         . O 0 0 0 0 6
-        - \ ^ ^ ^ ^ / 
-      </pre></td>
-    </tr>
-  </table>
-
-<h2>Fourth-row Templates</h2>
-
-  <table class="hex-board hex-render">
-    <tr><td colspan="3" class="label">Viper</td></tr>
-    <tr>
-      <td colspan="3" align="center"><pre class="board">
-        7 8 8 8 8 8 8 8 9
-         . . . * 0 . . .
-        4 . 0 0 0 0 0 . 6
-         . 0 0 0 0 0 0 .
-        4 0 0 0 0 0 0 0 6
-         \ ^ ^ ^ ^ ^ ^ /
-      </pre></td>
-    </tr>
-    <tr>
-      <td><pre class="board">
-        7 8 8 8 8 8 8 8 9
-         . . . * O . . . 
-        4 . 0 @ O O O . 6
-         . 0 0 0 O O O . 
-        4 0 0 0 0 O O O 6
-         \ ^ ^ ^ ^ ^ ^ / 
-      </pre></td>
-      <td><pre class="board">
-        7 8 8 8 8 8 8 8 9
-         . . . * 0 . . . 
-        4 . O O 0 @ 0 . 6
-         . O O O 0 0 0 . 
-        4 O O O 0 0 0 0 6
-         \ ^ ^ ^ ^ ^ ^ / 
-      </pre></td>
-      <td><pre class="board">
-        7 8 8 8 8 8 8 8 9
-          . . . * O . . .
-        4 . O 0 @ 0 O . 6
-          . O # 0 0 # O .
-        4 O 0 0 O 0 0 O 6
-         \ ^ ^ ^ ^ ^ ^ /
-      </pre></td>
-    </tr>
-  </table>
-
-  <hr />
-
-  <table class="hex-board hex-render">
-    <tr><td colspan="2" class="label">Bird of Prey</td></tr>
-    <tr>
-      <td colspan="2" align="center"><pre class="board">
-        7 8 8 8 8 8 8 8 8 9
-         . . . 0 * 0 . . .
-        4 . 0 0 0 0 0 0 . 6
-         . 0 0 0 . 0 0 0 .
-        4 0 0 0 0 0 0 0 0 6
-         \ ^ ^ ^ ^ ^ ^ ^ / 
-      </pre></td>
-    </tr>
-    <tr>
-      <td><pre class="board">
-        7 8 8 8 8 8 8 8 8 9
-         . . . 0 * O . . . 
-        4 . 0 @ 0 O O O . 6
-         . # 0 # . O O O . 
-        4 0 0 0 0 O O O O 6
-         \ ^ ^ ^ ^ ^ ^ ^ / 
-      </pre></td>
-      <td><pre class="board">
-        7 8 8 8 8 8 8 8 8 9
-         . . . O * 0 . . . 
-        4 . O O O 0 @ 0 . 6
-         . O O O . # 0 # . 
-        4 O O O O 0 0 0 0 6
-         \ ^ ^ ^ ^ ^ ^ ^ / 
-      </pre></td>
-    </tr>
-  </table>
-
-  <hr />
-
-  <table class="hex-board hex-render">
-    <tr><td colspan="4" class="label">2/3/3/4</td></tr>
-    <tr>
-      <td colspan="4" align="center"><pre class="board">
-        7 8 8 8 8 9
-         . * * . .
-        4 0 0 0 . 6
-         . 0 0 0 . 
-        4 0 0 0 0 6
-         \ ^ ^ ^ / 
-       </pre></td>
-     </tr>
-     <tr>
-      <td><pre class="board">
-        7 8 8 8 8 9
-         . * * . .
-        4 0 0 O . 6
-         . @ O O . 
-        4 0 0 O O 6
-        \ ^ ^ ^ /  
-      </pre></td>
-      <td><pre class="board">
-        7 8 8 8 8 9
-         . * * . .
-        4 O 0 0 . 6
-         . O @ O . 
-        4 O 0 0 O 6
-        \ ^ ^ ^ /  
-      </pre></td>
-      <td><pre class="board">
-        7 8 8 8 8 9
-         . * * . .
-        4 0 0 # . 6
-         . # 0 @ . 
-        4 0 % 0 0 6
-        \ ^ ^ ^ /  
-      </pre></td>
-      <td><pre class="board">
-        7 8 8 8 8 9 _ _ 
-         . * * . .
-        4 # % # . 6
-         . @ ! ! . 
-        4 0 0 0 0 6
-      </pre></td>
-    </tr>
-  </table>
-
-  <hr />
-
-  <table class="hex-board hex-render">
-    <tr><td colspan="4" class="label">1/2/3/4</td></tr>
-    <tr>
-      <td colspan="4" align="center"><pre class="board">
-        7 8 8 8 8 9
-         . . * . .
-        4 . 0 0 . 6
-         . * 0 0 . 
-        4 0 0 0 0 6
-         \ ^ ^ ^ / 
-       </pre></td>
-     </tr>
-     <tr>
-      <td><pre class="board">
-        7 8 8 8 8 9
-         . . * . . 
-        4 . @ O . 6
-         . * O O . 
-        4 0 0 O O 6
-        \ ^ ^ ^ /  
-      </pre></td>
-      <td><pre class="board">
-        7 8 8 8 8 9
-         . . * . . 
-        4 . 0 0 . 6
-         . * @ O . 
-        4 O 0 0 O 6
-        \ ^ ^ ^ /  
-      </pre></td>
-      <td><pre class="board">
-        7 8 8 8 8 9
-        . . * . . 
-        4 . O @ . 6
-        . * # # . 
-        4 0 0 0 0 6
-        \ ^ ^ ^ /  
-      </pre></td>
-      <td><pre class="board">
-        7 8 8 8 8 9 _ _ 
-         . . * . .  _ _ 
-        4 . # # . 6 _ _ 
-         . * ! @ .  _ _ 
-        4 ! O 0 0 6 _ _ 
-        \ ^ ^ ^ /   _ _
-      </pre></td>
-    </tr>
-  </table>
-
-  <hr />
-
-  <table class="hex-board hex-render">
-    <tr><td colspan="4" class="label">2/3/3/4</td></tr>
-    <tr>
-      <td colspan="4" align="center"><pre class="board">
-        7 8 8 8 8 9 _ 
-         . * * . .  _ 
-        4 0 0 0 . 6 _ 
-         . 0 0 0 .  _ 
-        4 0 0 0 0 6 _ 
-         \ ^ ^ ^ /  _ 
-       </pre></td>
-     </tr>
-     <tr>
-      <td><pre class="board">
-        7 8 8 8 8 9
-         . * * . . 
-        4 0 0 O . 6
-         . @ O O . 
-        4 0 0 O O 6
-         \ ^ ^ ^ / 
-      </pre></td>
-      <td><pre class="board">
-        7 8 8 8 8 9
-         . * * . . 
-        4 O 0 0 . 6
-         . O @ O . 
-        4 O 0 0 O 6
-         \ ^ ^ ^ / 
-      </pre></td>
-      <td><pre class="board">
-        7 8 8 8 8 9
-         . * * . . 
-        4 0 0 # . 6
-         . # 0 @ . 
-        4 0 O 0 0 6
-         \ ^ ^ ^ / 
-      </pre></td>
-      <td><pre class="board">
-        7 8 8 8 8 9 _ 
-         . * * . .  _ 
-        4 0{x} O @ . 6 _ 
-         . # 0{x} # .  _ 
-        4 0 0 0 0 6 _ 
-         \ ^ ^ ^ /  _ 
-      </pre></td>
-    </tr>
-  </table>
-
-  <hr />
-
-  <table class="hex-board hex-render">
-    <tr><td colspan="4" class="label">2/3/4/2-2</td></tr>
-    <tr>
-      <td colspan="2" align="center"><pre class="board">
-        7 8 8 8 8 8 9
-         . . 0 * . . 
-        4 . 0 0 0 . 6
-         . 0 0 0 0 . 
-        4 0 0 * 0 0 6
-         \ ^ ^ ^ ^ / _
-       </pre></td>
-     </tr>
-     <tr>
-      <td><pre class="board">
-        7 8 8 8 8 8 9
-         . . 0 * . . 
-        4 . @ 0 O . 6
-         . # # O O . 
-        4 0 0 * O O 6
-         \ ^ ^ ^ ^ / 
-      </pre></td>
-      <td><pre class="board">
-        7 8 8 8 8 8 9
-         . . O * . . 
-        4 . O O @ . 6
-         . O O # # . 
-        4 O O * 0 0 6
-         \ ^ ^ ^ ^ / 
-      </pre></td>
-    </tr>
-  </table>
- 
-  <hr />
-
-    <table class="hex-board hex-render">
-      <tr><td colspan="4" class="label">2/3/4/4</td></tr>
+    <h2>Vocabulary</h2>
+    The language used to describe hex boards is made up of these tokens.
+    <table class="hex-board hex-render vocabulary">
       <tr>
-        <td colspan="4" align="center"><pre class="board">
-          7 8 8 8 8 8 9
-           . . 0 * . . 
-          4 . 0 0 0 . 6
-           . 0 0 0 0 . 
-          4 . * 0 0 0 6
-           \ ^ ^ ^ ^ / _
-         </pre></td>
-       </tr>
-       <tr>
-        <td><pre class="board">
-          7 8 8 8 8 8 9
-           . . 0 * . . 
-          4 . @ 0 O . 6
-           . 0 0 O O . 
-          4 . * O O O 6
-           \ ^ ^ ^ ^ / 
+        <td colspan="8" class="label">
+          Full Cells
+        </td>
+      </tr>
+      <tr>
+        <td class="token"><pre>.</pre></td>
+        <td class="token"><pre>O</pre></td>
+        <td class="token"><pre>*</pre></td>
+        <td class="token"><pre>0</pre></td>
+        <td class="token"><pre>@</pre></td>
+        <td class="token"><pre>#</pre></td>
+        <td class="token"><pre>!</pre></td>
+        <td class="token"><pre>%</pre></td>
+      </tr>
+      <tr>
+        <td><pre class="hex-board hex-render">
+        [SMALL-NEWLINE]
+        .</pre></td>
+        <td><pre class="hex-board hex-render">
+        [SMALL-NEWLINE]
+        O</pre></td>
+        <td><pre class="hex-board hex-render">
+        [SMALL-NEWLINE]
+        *</pre></td>
+        <td><pre class="hex-board hex-render">
+        [SMALL-NEWLINE]
+        0</pre></td>
+        <td><pre class="hex-board hex-render">
+        [SMALL-NEWLINE]
+        @</pre></td>
+        <td><pre class="hex-board hex-render">
+        [SMALL-NEWLINE]
+        #</pre></td>
+        <td><pre class="hex-board hex-render">
+        [SMALL-NEWLINE]
+        !</pre></td>
+        <td><pre class="hex-board hex-render">
+        [SMALL-NEWLINE]
+        %</pre></td>
+        </td>
+      </tr>
+    </table>
+
+    <br>
+
+    <table class="hex-board hex-render vocabulary">
+      <tr>
+        <td colspan="8" class="label">
+          Borders and Corners
+        </td>
+      </tr>
+      <tr>
+        <td class="token"><pre>b</pre></td>
+        <td class="token"><pre>u</pre></td>
+        <td class="token"><pre>c</pre></td>
+        <td class="token"><pre>n</pre></td>
+        <td class="token"><pre>bu</pre></td>
+        <td class="token"><pre>uc</pre></td>
+        <td class="token"><pre>nc</pre></td>
+        <td class="token"><pre>bn</pre></td>
+      </tr>
+      <tr>
+        <td><pre class="hex-board hex-render">
+        [SMALL-NEWLINE]
+        b</pre></td>
+        <td><pre class="hex-board hex-render">
+        [SMALL-NEWLINE]
+        u</pre></td>
+        <td><pre class="hex-board hex-render">
+        [SMALL-NEWLINE]
+        c</pre></td>
+        <td><pre class="hex-board hex-render">
+        [SMALL-NEWLINE]
+        n</pre></td>
+        <td><pre class="hex-board hex-render">
+        [SMALL-NEWLINE]
+        bu</pre></td>
+        <td><pre class="hex-board hex-render">
+        [SMALL-NEWLINE]
+        uc</pre></td>
+        <td><pre class="hex-board hex-render">
+        [SMALL-NEWLINE]
+        cn</pre></td>
+        <td><pre class="hex-board hex-render">
+        [SMALL-NEWLINE]
+        bn</pre></td>
+      </tr>
+      <tr>
+        <td class="token"><pre>4</pre></td>
+        <td class="token"><pre>8</pre></td>
+        <td class="token"><pre>6</pre></td>
+        <td class="token"><pre>2</pre></td>
+        <td class="token"><pre>7</pre></td>
+        <td class="token"><pre>9</pre></td>
+        <td class="token"><pre>3</pre></td>
+        <td class="token"><pre>1</pre></td>
+      </tr>
+      <tr>
+        <td><pre class="hex-board hex-render">
+        [SMALL-NEWLINE]
+        4</pre></td>
+        <td><pre class="hex-board hex-render">
+        [SMALL-NEWLINE]
+        8</pre></td>
+        <td><pre class="hex-board hex-render">
+        [SMALL-NEWLINE]
+        6</pre></td>
+        <td><pre class="hex-board hex-render">
+        [SMALL-NEWLINE]
+        2</pre></td>
+        <td><pre class="hex-board hex-render">
+        [SMALL-NEWLINE]
+        7</pre></td>
+        <td><pre class="hex-board hex-render">
+        [SMALL-NEWLINE]
+        9</pre></td>
+        <td><pre class="hex-board hex-render">
+        [SMALL-NEWLINE]
+        3</pre></td>
+        <td><pre class="hex-board hex-render">
+        [SMALL-NEWLINE]
+        1</pre></td>
+      </tr>
+    </table>
+
+    <p>
+    Full cell tokens may be immediately followed by a border or corner token,
+    with no intervening whitespace, to produce a partial cell of that type.
+    Here are some examples (it is a known bug that the blue dots aren't
+    properly cropped):
+    </p>
+
+    <table class="hex-board hex-render vocabulary">
+      <tr>
+        <td colspan="8" class="label">
+          Colored Borders and Corners
+        </td>
+      </tr>
+      <tr>
+        <td class="token"><pre>.4</pre></td>
+        <td class="token"><pre>Ou</pre></td>
+        <td class="token"><pre>*6</pre></td>
+        <td class="token"><pre>0n</pre></td>
+        <td class="token"><pre>@7</pre></td>
+        <td class="token"><pre>#uc</pre></td>
+        <td class="token"><pre>!3</pre></td>
+        <td class="token"><pre>%bn</pre></td>
+      </tr>
+      <tr>
+        <td><pre class="hex-board hex-render">
+        [SMALL-NEWLINE]
+        .4</pre></td>
+        <td><pre class="hex-board hex-render">
+        [SMALL-NEWLINE]
+        Ou</pre></td>
+        <td><pre class="hex-board hex-render">
+        [SMALL-NEWLINE]
+        *6</pre></td>
+        <td><pre class="hex-board hex-render">
+        [SMALL-NEWLINE]
+        0n</pre></td>
+        <td><pre class="hex-board hex-render">
+        [SMALL-NEWLINE]
+        @7</pre></td>
+        <td><pre class="hex-board hex-render">
+        [SMALL-NEWLINE]
+        #uc</pre></td>
+        <td><pre class="hex-board hex-render">
+        [SMALL-NEWLINE]
+        !3</pre></td>
+        <td><pre class="hex-board hex-render">
+        [SMALL-NEWLINE]
+        %bn</pre></td>
+      </tr>
+    </table>
+
+    <br>
+
+    <table class="hex-board hex-render vocabulary">
+      <tr>
+        <td colspan="4" class="label">
+          White Space
+        </td>
+      </tr>
+      <tr>
+        <td class="token"><pre>O - O</pre>(half space)</td>
+        <td class="token"><pre>O _ O</pre>(full space)</td>
+        <td class="token"><pre>O</pre><i>newline</i><pre>_O</pre></td>
+        <td class="token">
+            <pre>O[SMALL-NEWLINE]</pre><i>newline</i>
+            <pre>_O</pre> (half-height)</td>
+      </tr>
+      <tr>
+        <td><pre class="hex-board hex-render">
+        [SMALL-NEWLINE]
+        O - O</pre></td>
+        <td><pre class="hex-board hex-render">
+        [SMALL-NEWLINE]
+        O _ O</pre></td>
+        <td><pre class="hex-board hex-render">
+        [SMALL-NEWLINE]
+        O
+        _ O</pre></td>
+        <td><pre class="hex-board hex-render">
+        [SMALL-NEWLINE]
+        O[SMALL-NEWLINE]
+        _ O</pre></td>
+      </tr>
+    <table>
+
+    <br>
+
+    <table class="hex-board hex-render vocabulary">
+      <tr>
+        <td colspan="8" class="label">
+          Highlighted Border
+        </td>
+      </tr>
+      <tr>
+        <td class="token"><pre>\</pre></td>
+        <td class="token"><pre>^</pre></td>
+        <td class="token"><pre>/</pre></td>
+      </tr>
+      <tr>
+        <td ><pre class="hex-board hex-render">
+         8 8
+         - \ -
         </pre></td>
-        <td><pre class="board">
-          7 8 8 8 8 8 9
-           . . O * . . 
-          4 . O 0 0 . 6
-           . O O @ O . 
-          4 . * 0 0 O 6
-           \ ^ ^ ^ ^ / 
+        <td ><pre class="hex-board hex-render">
+           8 8
+          - ^
         </pre></td>
-        <td><pre class="board">
-          7 8 8 8 8 8 9
-           . . O * . . 
-          4 . O O @ . 6
-           . O 0 # # . 
-          4 . * 0 0 0 6
-           \ ^ ^ ^ ^ / 
+        <td ><pre class="hex-board hex-render">
+          8 9
+         - / -
         </pre></td>
       </tr>
     </table>
 
-    <hr />
 
-    <table class="hex-board hex-render">
-      <tr><td colspan="4" class="label">Sphinx 2/4/4/5</td></tr>
-      <tr>
-        <td colspan="4" align="center"><pre class="board">
-          7 8 8 8 8 8 9
-           . * 0 . . . 
-          4 * 0 0 0 . 6
-           . 0 0 0 0 . 
-          4 0 0 0 0 0 6
-           \ ^ ^ ^ ^ / _
-         </pre></td>
-       </tr>
-       <tr>
-        <td><pre class="board">
-          7 8 8 8 8 8 9
-           . * 0 . . . 
-          4 * 0 @ 0 . 6
-           . O 0 0 0 . 
-          4 O 0 0 0 0 6
-           \ ^ ^ ^ ^ / 
-        </pre></td>
-        <td><pre class="board">
-          7 8 8 8 8 8 9
-           . * O . . . 
-          4 * O O O . 6
-           . @ O O O . 
-          4 0 0 O O O 6
-           \ ^ ^ ^ ^ / 
-        </pre></td>
-        <td><pre class="board">
-          7 8 8 8 8 8 9
-           . * 0 . . . 
-          4 * 0 # O . 6
-           . # ! @ O . 
-          4 ! O 0 0 O 6
-           \ ^ ^ ^ ^ / 
-        </pre></td>
-      </tr>
-    </table>
+    <h2>Mnemonic Aids for Vocabulary Tokens</h2>
 
-Here is the Sphinx again.
-This time the layout is accomplished by spacing, rather than by using a table:
+    <p>Here are some notes to help you remember the vocabulary tokens.<p>
 
-    <pre class="hex-board hex-render">
-    _ _ _ _ _ _    _    7 8 8 8 8 8 9
-    _ _ _ _ _ _    _     . . 0 * . . 
-    _ _ _ _ _ _    _    4 . 0 0 0 . 6
-    _ _ _ _ _ _    _     . 0 0 0 0 . 
-    _ _ _ _ _ _    _    4 . * 0 0 0 6
-    _ _ _ _ _ _    _     \ ^ ^ ^ ^ / _
-  7 8 8 8 8 8 9    _    7 8 8 8 8 8 9    _    7 8 8 8 8 8 9
-   . . 0 * . .     _     . . O * . .     _     . . O * . . 
-  4 . @ 0 O . 6    _    4 . O 0 0 . 6    _    4 . O O @ . 6
-   . 0 0 O O .     _     . O O @ O .     _     . O 0 # # . 
-  4 . * O O O 6    _    4 . * 0 0 O 6    _    4 . * 0 0 0 6
-   \ ^ ^ ^ ^ /     _     \ ^ ^ ^ ^ /     _     \ ^ ^ ^ ^ / 
-    </pre>
+    <p>
+    Gray hexagons are used to represent the background of a pattern.
+    In plain-text communications, empty cells are often represented by a
+    period ('<tt>.</tt>'), so I use that character for a gray hexagon.
+    Empty (white) cells are visually similar to a capital oh ('<tt>O</tt>').
+    </p>
+    <p>
+    Cells owned by the current player are of particular interest. The asterisk
+    ('<tt>*</tt>') is often used to mark items of interest, and has a vaguely
+    hexagonal shape in some fonts, so it is used for 'owned' cells.
+    Zero ('<tt>0</tt>') also looks kind of like an empty cell, so I use it
+    to represent empty but highlighted (yellow) hexes. The at-sign
+    ('<tt>@</tt>') looks like a circle within a circle, so I use it to
+    represent a yellow hex marked with a blue dot. I use the pound sign
+    ('<tt>#</tt>') for a yellow hex with a smaller dot; the only mnemonic value
+    it has is that it's next to the at-sign on U.S. keyboards. The
+    exclamation point ('<tt>!</tt>') makes a yellow hex with a very small dot,
+    reminiscent of the dot at the bottom of the exclamation point.  As for
+    ('<tt>%</tt>') for opponent-owned cells, all I can say is that I'm running
+    out of punctuation.
+    </p>
 
-<hr />
+    <p>
+    For the border tokens, notice that the shape of 'u', 'c', 'n', and (to a
+    lesser extent) 'b' are similar to the shape of their corresponding
+    half-hexes. Corner pieces (quarter-hexes) are built by putting a top- or
+    bottom-edge letter together with a left- or right-edge letter.
+    </p>
 
-<h2>Fifth-row Templates</h2>
+    <p>
+    The digit aliases for the border and corner tokens are based on their
+    position on a numeric keypad. For instance, <tt>4</tt> represents a
+    left-edge half-hex because <tt>4</tt> is on the left edge of a numeric
+    keypad.
+    </p>
 
-  <table class="hex-board hex-render">
-    <tr><td colspan="3" class="label">3/5/8/9/10</td></tr>
-    <tr>
-      <td colspan="3" align="center"><pre class="board">
-         8 8 8 8 8 8 8 8 8 8 8
-        4 . . . 0 * 0 . . . . 6
-         . . . 0 0 0 0 0 . . .
-        4 . 0 0 0 0 0 0 0 0 . 6
-         . 0 0 0 0 0 0 0 0 0 .
-        4 0 0 0 0 0 0 0 0 0 0 6
-         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
-      </pre></td>
-    </tr>
-    <tr>
-      <td><pre class="board">
-         8 8 8 8 8 8 8 8 8 8 8
-        4 . . . O * O . . . . 6
-         . . . O ! ! O O . . .
-        4 . O O 0 @ O O O O . 6
-         . O O 0 0 0 O O O O .
-        4 O O 0 0 0 0 O O O O 6
-         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
-      </pre></td>
-      <td><pre class="board">
-         8 8 8 8 8 8 8 8 8 8 8
-        4 . . . O * O . . . . 6
-         . . . O ! ! O O . . .
-        4 . O O O @ 0 O O O . 6
-         . O O O 0 0 0 O O O .
-        4 O O O 0 0 0 0 O O O 6
-         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
-      </pre></td>
-      <td><pre class="board">
-         8 8 8 8 8 8 8 8 8 8 8
-        4 . . . O * O . . . . 6
-         . . . O O{x} O{x} O O . . .
-        4 . O O O O{x} O O O O . 6
-         . O O O O{x} O{x} O O O O .
-        4 O O O O{x} O{x} O{x} O O O O 6
-         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
-      </pre></td>
-    </tr>
-    <tr>
-      <td><pre class="board">
-         8 8 8 8 8 8 8 8 8 8 8
-        4 . . . O * ! . . . . 6
-         . . . O O{x} ! @ 0 . . .
-        4 . O O O 0 0 0 0 0 . 6
-         . O O O 0 0 0 0 0 0 .
-        4 O O O 0 0 0 0 0 0 0 6
-         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
-      </pre></td>
-      <td><pre class="board">
-         8 8 8 8 8 8 8 8 8 8 8
-        4 . . . O * O . . . . 6
-         . . . 0 @ O{x} O O . . .
-        4 . 0 0 0 0 0 O O O . 6
-         . 0 0 0 0 0 0 O O O .
-        4 0 0 0 0 0 0 0 O O O 6
-         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
-      </pre></td>
-      <td><pre class="board">
-         8 8 8 8 8 8 8 8 8 8 8
-        4 . . . O * O . . . . 6
-         . . . O O O O O . . .
-        4 . O O O O{x} O O O O . 6
-         . O O O O{x} O{x} O O O O .
-        4 O O O O{x} O{x} O{x} O O O O 6
-         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
-      </pre></td>
-    </tr>
-    <tr>
-      <td><pre class="board">
-         8 8 8 8 8 8 8 8 8 8 8
-        4 . . . O * O . . . . 6
-         . . . 0 @ 0 O O . . .
-        4 . 0 # 0 0 # 0 O O . 6
-         . 0 0 0 O{x} 0 0 0 O O .
-        4 0 0 0 0 0 0 0 0 O O 6
-         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
-      </pre></td>
-      <td><pre class="board">
-         8 8 8 8 8 8 8 8 8 8 8
-        4 . . . O * O . . . . 6
-         . . . O 0 0 O O . . .
-        4 . O O 0 @ 0 O O O . 6
-         . O O # 0 0 # O O O .
-        4 O O 0 0 O{x} 0 0 O O O 6
-         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
-      </pre></td>
-      <td><pre class="board">
-         8 8 8 8 8 8 8 8 8 8 8
-        4 . . . O * O . . . . 6
-         . . . O 0 @ 0 O . . .
-        4 . O 0 # 0 0 # 0 O . 6
-         . O 0 0 0 O{x} 0 0 0 O .
-        4 O 0 0 0 0 0 0 0 0 O 6
-         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
-      </pre></td>
-    </tr>
-    <tr>
-      <td colspan=3 align="center"><pre class="board">
-         8 8 8 8 8 8 8 8 8 8 8
-        4 . . . O * O . . . . 6
-         . . . O O O O O . . .
-        4 . O O O O{x} O O O O . 6
-         . O O O O O O O O O .
-        4 O O O O{x} O O{x} O O O O 6
-         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
-      </pre></td>
-    </tr>
-    <tr>
-      <td><pre class="board">
-         8 8 8 8 8 8 8 8 8 8 8
-        4 . . . O * O . . . . 6
-         . . . O O O O O . . .
-        4 . O O O O{x} O O O O . 6
-         . O O O O O O O O O .
-        4 O O O O O O O O O O 6
-         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
-      </pre></td>
-      <td><pre class="board">
-         8 8 8 8 8 8 8 8 8 8 8
-        4 . . . O * O . . . . 6
-         . . . O O O O O . . .
-        4 . O O O O O O O O . 6
-         . O O O O O O O O O .
-        4 O O O O{x} O O O O O O 6
-         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
-      </pre></td>
-      <td><pre class="board">
-         8 8 8 8 8 8 8 8 8 8 8
-        4 . . . O * O . . . . 6
-         . . . O O O O O . . .
-        4 . O O O O O O O O . 6
-         . O O O O O O O O O .
-        4 O O O O O O{x} O O O O 6
-         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
-      </pre></td>
-    </tr>
-  </table>
-  ...to be completed.
+    <h2>Examples</h2>
 
-  <hr />
+    <p>
+    These are samples that show how the tokens can be put together to create
+    pictures.
+    </p>
 
-  <table class="hex-board hex-render">
-    <tr><td colspan="2" class="label">IV1d (3/5/7/8/9)</td></tr>
-    <tr>
-      <td colspan="2" align="center"><pre class="board">
-         8 8 8 8 8 8 8 8 8 8
-        4 . . 0 0 0 . . . . 6
-         . . * 0 0 0 0 . . .
-        4 . 0 0 0 0 0 0 0 . 6
-         . 0 0 0 0 0 0 0 0 .
-        4 0 0 0 0 0 0 0 0 0 6
-         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
-      </pre></td>
-    </tr>
-    <tr><td colspan="2">
-        <p>This template contains a four-way fork. The first three tines of the
-        fork are relatively simple; unfortunately, all three overlap in
-        one place, marked x.  That overlap means that a fourth tine  is
-        required that does not use x. In this case, that fourth tine uses
-        <em>all</em> of the template <em>except</em> for x.</p>
-    </td></tr>
-    <tr>
-      <td><pre class="board">
-         8 8 8 8 8 8 8 8 8 8
-        4 . . O O O . . . . 6
-         . . * O O O O . . .
-        4 . 0 0{x} O O O O O . 6
-         . O @ O O O O O O .
-        4 O 0 0 O O O O O O 6
-         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
-      </pre></td>
-      <td><pre class="board">
-         8 8 8 8 8 8 8 8 8 8
-        4 . . O O O . . . . 6
-         . . * 0 O O O . . .
-        4 . O 0{x} @ 0 O O O . 6
-         . O O 0 0 0 O O O .
-        4 O O 0 0 0 0 O O O 6
-         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
-      </pre></td>
-    </tr>
-    <tr>
-      <td><pre class="board">
-         8 8 8 8 8 8 8 8 8 8
-        4 . . O O O . . . . 6
-         . . * O O O O . . .
-        4 . 0 @{x} 0 O O O O . 6
-         . # 0 0 # O O O O .
-        4 0 0 O 0 0 O O O O 6
-         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
-      </pre></td>
-      <td><pre class="board">
-         8 8 8 8 8 8 8 8 8 8
-        4 . . 0 0 0 . . . . 6
-         . . * 0 0 0 0 . . .
-        4 . @ O{x} 0 0 0 0 0 . 6
-         . 0 0 0 0 0 0 0 0 .
-        4 0 0 0 0 0 0 0 0 0 6
-         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
-      </pre></td>
-    </tr>
-    <tr><td colspan="2">
-        <p>That fourth tine is massive. It contains this two-way fork:</p>
-    </td></tr>
-    <tr>
-      <td><pre class="board">
-         8 8 8 8 8 8 8 8 8 8
-        4 . . O O O . . . . 6
-         . . *{@} O O O O . . .
-        4 . * . O O O O O . 6
-         . @ O O O O O O O .
-        4 ! ! O O O O O O O 6
-         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
-      </pre></td>
-      <td><pre class="board">
-         8 8 8 8 8 8 8 8 8 8
-        4 . . 0 0 0 . . . . 6
-         . . *{@} 0 0 0 0 . . .
-        4 . * . 0 # 0 0 0 . 6
-         . O @ 0 0 0 0 0 0 .
-        4 O O # 0 0 0 0 0 0 6
-         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
-      </pre></td>
-    </td></tr>
-    <tr><td colspan="2">
-        <p>That second tine is huge. It contains this two-way fork:</p>
-    </td></tr>
-    <tr>
-      <td><pre class="board">
-         8 8 8 8 8 8 8 8 8 8
-        4 . . O O O . . . . 6
-      . . *{@} O O O O . . .
-        4 . * . O O O O O . 6
-         . . * O O O O O O .
-        4 . . @ O O O O O O 6
-         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
-      </pre></td>
-      <td><pre class="board">
-         8 8 8 8 8 8 8 8 8 8
-        4 . . 0 0 0 . . . . 6
-         . . *{@} 0 0 0 0 . . .
-        4 . * . 0 @ 0 0 0 . 6
-         . O * 0 0 0 0 0 0 .
-        4 O O O 0 0 0 0 0 0 6
-         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
-      </pre></td>
-    </tr>
-    <tr><td colspan="3">
-        <p>That second tine is large. It contains this <em>six</em>-way
-        fork:</p>
-    </td></tr>
-    <tr>
-      <td ><pre class="board">
-         8 8 8 8 8 8 8 8 8 8
-        4 . . O O O . . . . 6
-         . . *{@} # 0 O O . . .
-        4 . * . 0 * O O O . 6
-         . . * # @ O O O O .
-        4 . . . 0 0 O O O O 6
-         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
-      </pre></td>
-      <td ><pre class="board">
-         8 8 8 8 8 8 8 8 8 8
-        4 . . O O O . . . . 6
-         . . *{@} # 0 O O . . .
-        4 . * . 0 * 0 O O . 6
-         . . * # @ 0 # O O .
-        4 . . . O # 0 0 O O 6
-         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
-      </pre></td>
-      <td ><pre class="board">
-         8 8 8 8 8 8 8 8 8 8
-        4 . . O O O . . . . 6
-      . . *{@} O O O O . . .
-        4 . * . 0 * 0 O O . 6
-         . . * @ 0 0 # O O .
-        4 . . . # O 0 0 O O 6
-         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
-      </pre></td>
-    </tr>
-    <tr>
-      <td ><pre class="board">
-         8 8 8 8 8 8 8 8 8 8
-        4 . . O O O . . . . 6
-         . . *{@} O O O O . . .
-        4 . * . O * 0 O O . 6
-         . . * @ # 0 ! O O .
-        4 . . . # ! 0 0 O O 6
-         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
-      </pre></td>
-      <td ><pre class="board">
-         8 8 8 8 8 8 8 8 8 8
-        4 . . O O O . . . . 6
-      . . *{@} @ 0 O O . . .
-        4 . * . 0 * 0 O O . 6
-         . . * O 0 0 0 O O .
-        4 . . . 0 0 0 0 O O 6
-         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
-      </pre></td>
-      <td ><pre class="board">
-         8 8 8 8 8 8 8 8 8 8
-        4 . . 0 ! 0 . . . . 6
-      . . *{@} 0 0 # 0 . . .
-        4 . * . ! * 0 0 0 . 6
-         . . * @ O 0 0 0 0 .
-        4 . . . # 0 0 0 0 0 6
-         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
-      </pre></td>
-    </tr>
+    <table class="example">
+      <tr><td>
+        <pre>
+        u u u u u u u    _ _    u u u    _ _   bu u u uc
+       b . . * 0 . . c   _ _   b . . c   _ _     . . .
+        . . O 0 @ . .    _ _    . . .    _ _    b . . c
+       b . O O 0 0 . c   _ _   b . . c   _ _     . . .
+        _ \ ^ ^ ^ / _    _ _    n n n    _ _   bn n n nc
+        </pre>
+      </td></tr>
 
-    <tr><td colspan="3">
-        <p>This completes the proof of the original template.</p>
-        <p>There is an alternative way of presenting the middle of the 
-        foregoing proof. Instead of the fourth tine of the top-level fork
-        and its first two subtemplates, we can view
-        the first three tines of the original
-        template as forcing a play in their sole overlap. This leads to to a
-        series of moves in which each of the opponent's responses is
-        forced. At the end of the sequence, we arrive at the same six-way
-        fork that was just shown.</p>
-    </td></tr>
-    <tr>
-      <td colspan="3" align="center"><pre class="board">
-         8 8 8 8 8 8 8 8 8 8
-        4 . . 0 0 0 . . . . 6
-         . . *{@} 0 0 0 0 . . .
-        4 . *{2} %{1} 0 *{6} 0 0 0 . 6
-         . O *{4} 0 0 0 0 0 0 .
-        4 O %{3} %{5} 0 0 0 0 0 0 6
-         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
-      </pre></td>
-    </tr>
+      <tr><td>
+        <pre class="hex-board hex-render">
+        u u u u u u u    _ _    u u u    _ _   bu u u uc
+       b . . * 0 . . c   _ _   b . . c   _ _     . . .
+        . . O 0 @ . .    _ _    . . .    _ _    b . . c
+       b . O O 0 0 . c   _ _   b . . c   _ _     . . .
+        _ \ ^ ^ ^ / _    _ _    n n n    _ _   bn n n nc
+        </pre>
+      </td></tr>
+    <table>
 
-  </table>
+    <br>
+
+    <table class="example">
+      <tr><td>
+        <pre>
+      ub u u u u u u cu  _ _   7 8 8 9   _ _     8 8 8
+        . . . . . . .    _ _    . . .    _ _    4 . . 6
+       b . . * . . . c   _ _   4 . . 6   _ _     . . .
+        . 0 . . O . .    _ _    . . .    _ _    4 . . 6
+       b . . @ . . . c   _ _   4 . . 6   _ _     . . .
+        . . . . . . .    _ _    . . .    _ _    4 . . 6
+      nb n n n n n n cn  _ _   1 2 2 3   _ _     2 2 2
+        </pre>
+      </td></tr>
+      <tr><td>
+        <pre class="hex-board hex-render">
+      ub u u u u u u cu  _ _   7 8 8 9   _ _     8 8 8
+        . . . . . . .    _ _    . . .    _ _    4 . . 6
+       b . . * . . . c   _ _   4 . . 6   _ _     . . .
+        . 0 . . O . .    _ _    . . .    _ _    4 . . 6
+       b . . @ . . . c   _ _   4 . . 6   _ _     . . .
+        . . . . . . .    _ _    . . .    _ _    4 . . 6
+      nb n n n n n n cn  _ _   1 2 2 3   _ _     2 2 2
+        </pre>
+      </td></tr>
+    <table>
+
+    <br>
+
+    <table class="example">
+      <tr><td>
+        <pre>
+      *7 *8 *8 *9  _  @7 @8 @8 @9   _  07 08 08 09  _  O7  O8  O8  O9
+        .  .  .    _    .  .  .     _    .  .  .    _     .   .   .  
+      *4 .  .  *6  _  @4 .  .  @6   _  04 .  .  06  _  O4   .   .  O6
+        .  .  .    _    .  .  .     _    .  .  .    _     .   .   .  
+      *4 .  .  *6  _  @4 .  .  @6   _  04 .  .  06  _  O4   .   .  O6
+        .  .  .    _    .  .  .     _    .  .  .    _     .   .   .  
+      *1 *2 *2 *3  _  @1 @2 @2 @3   _  01 02 02 03  _  O1  O2  O2  O3
+        </pre>
+      </td></tr>
+      <tr><td>
+        <pre class="hex-board hex-render">
+      *7 *8 *8 *9  _  @7 @8 @8 @9   _  07 08 08 09  _  O7  O8  O8  O9
+        .  .  .    _    .  .  .     _    .  .  .    _     .   .   .  
+      *4 .  .  *6  _  @4 .  .  @6   _  04 .  .  06  _  O4   .   .  O6
+        .  .  .    _    .  .  .     _    .  .  .    _     .   .   .  
+      *4 .  .  *6  _  @4 .  .  @6   _  04 .  .  06  _  O4   .   .  O6
+        .  .  .    _    .  .  .     _    .  .  .    _     .   .   .  
+      *1 *2 *2 *3  _  @1 @2 @2 @3   _  01 02 02 03  _  O1  O2  O2  O3
+        </pre>
+      </td></tr>
+    <table>
+
+    <br>
+
+    <table class="example">
+      <tr><td>
+        <pre>
+    [SMALL-NEWLINE]
+       O   *  0  *  0  *  O       - -  
+                                       
+       O   bn O  bu O  uc O  nc O - -  O  0nb O 0ub O 0cu O 0cn O - -  
+                                                                         
+       O  .bn O .bu O .uc O .nc O - -  O  @nb O @ub O @cu O @cn O - -    
+                                                                         
+       O  *bn O *bu O *uc O *nc O - -  O  Obn O Obu O Ouc O Onc O - -    
+        </pre>
+      </td></tr>
+      <tr><td>
+        <pre class="hex-board hex-render">
+    [SMALL-NEWLINE]
+       O   *  0  *  0  *  O       - -  
+                                       
+       O   bn O  bu O  uc O  nc O - -  O  0nb O 0ub O 0cu O 0cn O - -  
+                                                                         
+       O  .bn O .bu O .uc O .nc O - -  O  @nb O @ub O @cu O @cn O - -    
+                                                                         
+       O  *bn O *bu O *uc O *nc O - -  O  Obn O Obu O Ouc O Onc O - -    
+        </pre>
+      </td></tr>
+    <table>
 
   </body>  
 </html>  

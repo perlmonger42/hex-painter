@@ -1,10 +1,27 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * This code uses Raphael to create an SVG image of a hex gameboard. (In older
  * versions of IE, which don't support SVG, it creates a VML image instead.)
- *  - the SVG is created as a the only child of div#draw, after removing any
- *    existing children of that div.
- *  - the hexboard description to be compiled into a picture is pulled from
- *    textarea#code
+ *
+ * HTML documents that include this JavaScript will have certain elements
+ * replaced when the document has finished loading. In those elements,
+ * ASCII-art pictures of hex game boards will be replaced by SVG renderings of
+ * those boards. The elements that will be processed are those that match
+ * these CSS selectors:
+ *   table.hex-board.hex-render pre.board
+ *   pre.hex-board.hex-render
+ * You may call renderBoards with a jQuery CSS selector if you want to process
+ * other page elements. For example, the default processing is produced by:
+ *   renderBoards($('table.hex-board.hex-render pre.board'));
+ *   renderBoards($('pre.hex-board.hex-render'));
+ *
+ * In addition to this on-load board tranformation, this library also provides
+ * a board editor if the page contains a textarea with id="code" and a div with
+ * id "draw". Given that context, the content of textarea#code will be rendered
+ * into div#draw.  Furthermore, the source code will be monitored for key-up
+ * events, and the drawing will be kept up-to-date as it changes.
+ *
+ * If the page contains a textarea with id="monitor", the ASCII-art-to-SVG
+ * translation process will print debugging information into that textarea.
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 /*jslint indent: 2, browser: true */
 /*globals Raphael */
@@ -60,11 +77,26 @@
 
 
   /**
+   * Clear any output in div#monitor.
+   */
+  function clearScreen(s) {
+    var monitors = $('#monitor');
+    var monitor = monitors.length > 0 ? monitors[0] : null;
+    if (monitor !== null) {
+      monitor.value = '';
+    }
+  }
+
+  /**
    * Add a line of output to div#monitor.
    * @param {string} s The string to print.
    */
   function println(s) {
-    $('#monitor')[0].value += s + '\n';
+    var monitors = $('#monitor');
+    var monitor = monitors.length > 0 ? monitors[0] : null;
+    if (monitor !== null) {
+      monitor.value += s + '\n';
+    }
   }
 
 
@@ -96,7 +128,7 @@
 
 
     where.children().remove();
-    $('#monitor')[0].value = '';
+    clearScreen();
 
     var drawingWidth = 500, drawingHeight = 500;
     var paper = new Raphael(where[0], drawingWidth, drawingHeight);
@@ -438,10 +470,9 @@
   }
 
   function renderBoards(boards) {
-    var index = 0;
-
-    // Use callbacks to render each board seperately,
+    // Use callbacks to render each board separately,
     // so the browser can do it incrementally.
+    var index = 0;
     window.setTimeout(renderNextBoard, 0);
     return;
 
@@ -459,17 +490,17 @@
   }
 
   $(document).ready(function () {
-    var drawing, program, monitor, renders, drawOnNoChange;
-    drawing = $('#draw');
-    program = $('#code');
-    monitor = $('#monitor');
-    //renders = $('pre.hex-board.hex-render');
-    //renders = $('table.hex-board.hex-render pre.board');
+    var drawing, program, monitor, drawOnNoChange;
+    drawing = $('div#draw');
+    program = $('textarea#code');
+    monitor = $('textarea#monitor');
 
-    drawOnNoChange = new UpdateAfterInputPause(program, 100, function () {
-      drawBoard(drawing, program[0].value);
-      drawing.css('border', '2px solid orange');
-    });
+    if (program.length > 0 && drawing.length > 0) {
+      drawOnNoChange = new UpdateAfterInputPause(program, 100, function () {
+        drawBoard(drawing, program[0].value);
+        drawing.css('border', '2px solid orange');
+      });
+    }
 
     renderBoards($('table.hex-board.hex-render pre.board'));
     renderBoards($('pre.hex-board.hex-render'));
