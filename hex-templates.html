@@ -1,0 +1,1149 @@
+<html>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  This page is a collection of virtual-connection templates, rendered
+  using hex-board.js.
+  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <head>
+    <meta charset="utf-8">
+    <title>Hex Templates</title>
+    <!-- <link rel="stylesheet" href="demo.css" media="screen">  -->
+    <!-- <link rel="stylesheet" href="demo-print.css" media="print">  -->
+    <script src="jquery-1.7.2.min.js"></script>
+    <script src="raphael-min.js"></script>
+    <script id='mainJS' src="hex-board.js"></script>
+    <style type="text/css">
+      td.label {
+        text-align: center;
+        font-size: 1.2em;
+        font-weight: bold;
+      }
+    </style>
+  </head>  
+  <body>  
+    <h1>Hex: Threats, Forks, and Templates</h1>
+
+    <p>
+    This page shows various patterns of interest to those who play the
+    <a href="http://en.wikipedia.org/wiki/Hex_%28board_game%29">Game of Hex</a>.
+    For an even larger collection of patterns, see the
+    <a href="http://www.drking.org.uk/hexagons/hex/templates.html">
+      Hex Templates
+    </a>
+    at <em>Hall of Hexagons</em>.
+    While the templates at the Hall of Hexagons are far more numerous, the
+    patterns on this page have the advantage that they come with explanations
+    of how they are constructed. That information informs your play in response
+    to a template intrusion by your opponent.
+    </p>
+
+    <p>
+    The templates presented here represent <em>threats</em> and <em>virtual
+    connections</em>.
+    </p>
+
+    <p>
+    A <em>threat</em> is a pattern that represents a position in which a player
+    may form, in a single play, a connection or virtual connection. A threat
+    is not a connection, nor even a virtual connection &mdash; it is the menace
+    that one <em>might</em> be formed.
+    </p>
+
+    <p>
+    A <em>virtual connection</em> (or <em>vc</em>) is a pattern that represents
+    a position in which the owner of the vc can force a connection. A virtual
+    connection occurs when two or more threats are present, and there is no
+    way for an opponent to interfere with all of them simultaneously. In other
+    words, a virtual connection is a fork.
+    <p>
+
+    <hr />
+
+    <h2>Threats</h2>
+
+    <p>
+    These are the most commonly encountered threats. Here, the illustrated
+    threats will connect an owned cell with an edge.
+    </p>
+
+    <p>
+    Owned cells are shown in light blue. Cells that must be empty for the
+    threat to exist are shown in yellow. The threatened play is shown as
+    a yellow cell marked with a large blue dot. Simple forks are shown
+    by cells containing a lowercase letter, with each tine of the same fork
+    having the same letter. The fact that the bottom edge is blue's destination
+    is emphasized by the light blue border.
+    </p>
+
+  <table class="hex-board hex-render">
+    <tr>
+      <td>
+        <table>
+          <tr><td class="label">Jab</td></tr>
+          <tr><td><pre class="board">
+             8 8 8
+            4 . . 6
+             . * .
+            4 0{a} 0{a} 6
+             . @ .
+            - \ /
+          </pre></td></tr>
+        </table>
+      </td>
+
+      <td>
+        <table>
+          <tr><td class="label">Hook</td></tr>
+          <tr><td><pre class="board">
+            7 8 8 9
+             . . .
+            4 * . 6
+             . @ .
+            4 0{a} 0{a} 6
+             \ ^ /
+          </pre></td></tr>
+        </table>
+      </td>
+
+      <td>
+        <table>
+          <tr><td class="label">Thrust</td></tr>
+          <tr><td><pre class="board">
+            7 8 8 9
+             . * .
+            4 0{a} 0{a} 6
+             . @ .
+            4 0{b} 0{b} 6
+             \ ^ /
+          </pre></td></tr>
+        </table>
+      </td>
+
+      <td>
+        <table>
+          <tr><td class="label">Roundhouse</td></tr>
+          <tr><td><pre class="board">
+           7 8 8 8 9
+            . . . .
+           4 * 0{a} . 6
+            . 0{a} @ .
+           4 . 0{b} 0{b} 6
+           - -\ ^ /
+          </pre></td></tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+
+  <p>
+  Threats can appear in several orientations, and they may threaten
+  to connect two cells together, rather than connecting a cell to an edge.
+  Here are the same threats again, in different orientations, and in their
+  cell-connecting guise.
+  </p>
+
+  <table class="hex-board hex-render">
+    <tr>
+      <td>
+        <table>
+          <tr><td class="label">Jab</td></tr>
+          <tr><td><pre class="board">
+            7 8 8 8 9
+             . . . .
+            4 . . * 6
+             . 0{a} @ .
+            4 * 0{a} . 6
+             2 2 2 2
+          </pre></td></tr>
+        </table>
+      </td>
+
+      <td>
+        <table>
+          <tr><td class="label">Hook</td></tr>
+          <tr><td><pre class="board">
+             7 8 8 9
+              . * .
+             4 0{a} 0{a} 6
+              . @ .
+             4 . * 6
+              2 2 2
+          </pre></td></tr>
+        </table>
+      </td>
+
+      <td>
+        <table>
+          <tr><td class="label">Thrust</td></tr>
+          <tr><td><pre class="board">
+            8 8 8 8 8
+           4 * 0{b} . . 6
+            . 0{b} @ 0{a} .
+           4 . . 0{a} * 6
+            . . . . .
+           1 2 2 2 2 3
+          </pre></td></tr>
+        </table>
+      </td>
+
+      <td>
+        <table>
+          <tr><td class="label">Roundhouse</td></tr>
+          <tr><td><pre class="board">
+            8         8         8         8         8
+            4    .         .         .         .    6
+            .         0{a}      @         0{b}      .
+            4    *         0{a}      0{b}      *    6
+            .         .         .         .         .
+            1    2         2         2         2    3
+          </pre></td></tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+
+  <hr />
+
+<h2>Virtual Connections</h2>
+  <p>
+  Like threats, virtual connections may be between an occupied cell and edge,
+  or they can join two occupied cells. However, I have not (yet) collected any
+  interior vcs, so the following virtual connections are all edge templates.
+  </p>
+
+  <hr />
+
+<h2>Second-row Virtual Connection Templates</h2>
+
+  <table class="hex-board hex-render">
+      <tr><td class="label">Fork</td></tr>
+      <tr><td><pre class="board">
+        7         8         8         9
+             .         *         .    
+        4         0{a}      0{a}      6
+             \         ^         /    
+      </pre></td></tr>
+  </table>
+
+  <hr />
+
+<h2>Third-row Virtual Connection Templates</h2>
+
+  <table class="hex-board hex-render">
+    <tr><td colspan="2" class="label">Beehive</td></tr>
+    <tr>
+      <td colspan="2" align="center"><pre class="board">
+         8 8 8 8 8
+        4 . 0 * . 6
+         . 0 0 0 . 
+        4 0 0 0 0 6
+         \ ^ ^ ^ / _
+      </pre></td>
+    </tr>
+    <tr>
+      <td><pre class="board">
+         8 8 8 8 8 
+        4 . O * . 6
+         . O O @ . 
+        4 O O 0 0 6
+         \ ^ ^ ^ /
+      </pre></td>
+      <td><pre class="board">
+          8 8 8 8 8 
+         4 . 0 * . 6
+          . @ 0 O .
+         4 0 0 O O 6
+          \ ^ ^ ^ /
+      </pre></td>
+    </tr>
+  </table>
+
+  <hr />
+
+  <table class="hex-board hex-render">
+    <tr><td colspan="2" class="label">Birdlet of Prey</td></tr>
+    <tr>
+      <td colspan="2" align="center"><pre class="board">
+         8 8 8 8 8 8
+        4 . 0 * 0 . 6
+         . 0 0 0 0 .
+        4 0 0 . 0 0 6
+         \ ^ / \ ^ /
+       </pre></td>
+     </tr>
+     <tr>
+      <td><pre class="board">
+         8 8 8 8 8 8 
+        4 . 0 * O . 6
+         . @ 0 O O . 
+        4 0 0 . O O 6
+         \ ^ / \ ^ / 
+      </pre></td>
+      <td><pre class="board">
+         8 8 8 8 8 8 
+        4 . O * 0 . 6
+         . O O 0 @ . 
+        4 O O . 0 0 6
+         \ ^ / \ ^ /
+    </tr>
+  </table>
+
+  <hr />
+
+  <table class="hex-board hex-render">
+    <tr><td colspan="2" class="label">2/3/3</td></tr>
+    <tr>
+      <td colspan="2" align="center"><pre class="board">
+         8 8 8 8 9
+        4 . 0 * .
+        . 0 0 * 6
+        4 0 0 0 .
+         \ ^ ^ /  
+       </pre></td>
+     </tr>
+     <tr>
+      <td><pre class="board">
+         8 8 8 8 9
+        4 . 0 * . 
+         . @ 0 * 6
+        4 0 0 O . 
+         \ ^ ^ / -
+      </pre></td>
+      <td><pre class="board">
+         8 8 8 8 9
+        4 . O * . 
+         . O O * 6
+        4 O O @ . 
+         \ ^ ^ /  
+      </pre></td>
+    </tr>
+  </table>
+
+  <hr />
+
+  <p>
+  Templates with only one owned cell, or templates with multiple but adjacent
+  owned cells, leave no doubt about <em>which</em> cell is virtually connected.
+  When there is more than one owned cell, and they are not adjacent, it can be
+  ambiguous. In such cases I mark the virtually-connected cell with an at-sign
+  ('<tt>@</tt>').
+  </p>
+  <p>
+  In this next template, it's pretty clear which cell is virtually connected by
+  the template, but I mark it anyway for the sake of consistency.
+  </p>
+
+  <table class="hex-board hex-render">
+    <tr><td colspan="2" class="label">1/2/3</td></tr>
+    <tr>
+      <td colspan="2" align="center"><pre class="board">
+         8 8 8 8
+        4 . *{@} . 6
+         . 0 0 .
+        4 0 0 * 6
+         \ ^ ^ / 
+       </pre></td>
+     </tr>
+     <tr>
+      <td><pre class="board">
+         8 8 8 8 
+        4 . *{@} . 6
+         . @ O . 
+        4 0 0 * 6
+         \ ^ ^ / 
+      </pre></td>
+      <td><pre class="board">
+         8 8 8 8
+        4 . *{@} . 6
+         . O @ .
+        4 O O * 6
+         \ ^ ^ / 
+      </pre></td>
+    </tr>
+  </table>
+
+  <hr />
+
+  <table class="hex-board hex-render">
+    <tr><td colspan="2" class="label">1/3/4</td></tr>
+    <tr>
+      <td colspan="2" align="center"><pre class="board">
+         8 8 8 8 8
+        4 . . *{@} . 6
+         . * 0 0 . 
+        4 0 0 0 0 6
+         \ ^ ^ ^ / _
+       </pre></td>
+     </tr>
+     <tr>
+      <td><pre class="board">
+         8 8 8 8 8 
+        4 . . *{@} . 6
+         . * O @ . 
+        4 O O 0 0 6
+         \ ^ ^ ^ / 
+      </pre></td>
+      <td><pre class="board">
+         8 8 8 8 8 
+        4 . . *{@} . 6
+         . * @ O .
+        4 0 0 O O 6
+         \ ^ ^ ^ / _
+      </pre></td>
+    </tr>
+  </table>
+
+  <hr />
+
+  <table class="hex-board hex-render">
+    <tr><td colspan="2" class="label">2/3/3</td></tr>
+    <tr>
+      <td colspan="2" align="center"><pre class="board">
+         7 8 8 8 8
+        . * * . 6 
+         4 0 0 0 .
+        . 0 0 0 6 
+        -\ ^ ^ / _
+       </pre></td>
+     </tr>
+     <tr>
+      <td><pre class="board">
+        7 8 8 8 8 
+         . * * . 6
+        4 0 0 O . 
+         . @ O O 6
+        - \ ^ ^ / 
+      </pre></td>
+      <td><pre class="board">
+        7 8 8 8 8
+         . * * . 6 
+        4 O O @ .
+         . O 0 0 6 
+        - \ ^ ^ / _
+      </pre></td>
+    </tr>
+  </table>
+
+  <hr />
+
+  <table class="hex-board hex-render">
+    <tr><td colspan="2" class="label">4/5/5</td></tr>
+    <tr>
+      <td colspan="2" align="center"><pre class="board">
+        7 8 8 8 8 8 8 
+         . *{@} 0 * 0 . 6
+        4 0 0 0 0 0 . 
+         . 0 0 0 0 0 6
+        - \ ^ ^ ^ ^ / 
+       </pre></td>
+     </tr>
+     <tr>
+      <td><pre class="board">
+        7 8 8 8 8 8 8 
+         . *{@} O * O . 6
+        4 0 0 O O O . 
+         . @ O O O O 6
+        - \ ^ ^ ^ ^ / 
+      </pre></td>
+      <td><pre class="board">
+        7 8 8 8 8 8 8 
+         . *{@} @ * 0 . 6
+        4 O O # 0 # . 
+         . O 0 0 0 0 6
+        - \ ^ ^ ^ ^ / 
+      </pre></td>
+    </tr>
+  </table>
+
+  <hr />
+
+<h2>Fourth-row Virtual Connection Templates</h2>
+
+  <table class="hex-board hex-render">
+    <tr><td colspan="2" class="label">Bird of Prey</td></tr>
+    <tr>
+      <td colspan="2" align="center"><pre class="board">
+        7 8 8 8 8 8 8 8 8 9
+         . . . 0 * 0 . . .
+        4 . 0 0 0 0 0 0 . 6
+         . 0 0 0 . 0 0 0 .
+        4 0 0 0 0 0 0 0 0 6
+         \ ^ ^ ^ ^ ^ ^ ^ / 
+      </pre></td>
+    </tr>
+    <tr>
+      <td><pre class="board">
+        7 8 8 8 8 8 8 8 8 9
+         . . . 0 * O . . . 
+        4 . 0 @ 0 O O O . 6
+         . # 0 # . O O O . 
+        4 0 0 0 0 O O O O 6
+         \ ^ ^ ^ ^ ^ ^ ^ / 
+      </pre></td>
+      <td><pre class="board">
+        7 8 8 8 8 8 8 8 8 9
+         . . . O * 0 . . . 
+        4 . O O O 0 @ 0 . 6
+         . O O O . # 0 # . 
+        4 O O O O 0 0 0 0 6
+         \ ^ ^ ^ ^ ^ ^ ^ / 
+      </pre></td>
+    </tr>
+  </table>
+
+  <hr />
+
+  <table class="hex-board hex-render">
+    <tr><td colspan="3" class="label">Viper</td></tr>
+    <tr>
+      <td colspan="3" align="center"><pre class="board">
+        7 8 8 8 8 8 8 8 9
+         . . . * 0 . . .
+        4 . 0 0 0 0 0 . 6
+         . 0 0 0 0 0 0 .
+        4 0 0 0 0 0 0 0 6
+         \ ^ ^ ^ ^ ^ ^ /
+      </pre></td>
+    </tr>
+    <tr>
+      <td><pre class="board">
+        7 8 8 8 8 8 8 8 9
+         . . . * O . . . 
+        4 . 0 @ O O O . 6
+         . 0 0 0 O O O . 
+        4 0 0 0 0 O O O 6
+         \ ^ ^ ^ ^ ^ ^ / 
+      </pre></td>
+      <td><pre class="board">
+        7 8 8 8 8 8 8 8 9
+         . . . * 0 . . . 
+        4 . O O 0 @ 0 . 6
+         . O O O 0 0 0 . 
+        4 O O O 0 0 0 0 6
+         \ ^ ^ ^ ^ ^ ^ / 
+      </pre></td>
+      <td><pre class="board">
+        7 8 8 8 8 8 8 8 9
+          . . . * O . . .
+        4 . O 0 @ 0 O . 6
+          . O # 0 0 # O .
+        4 O 0 0 O 0 0 O 6
+         \ ^ ^ ^ ^ ^ ^ /
+      </pre></td>
+    </tr>
+  </table>
+
+  <hr />
+
+  <table class="hex-board hex-render">
+    <tr><td colspan="4" class="label">2/3/3/4</td></tr>
+    <tr>
+      <td colspan="4" align="center"><pre class="board">
+        7 8 8 8 8 9
+         . * * . .
+        4 0 0 0 . 6
+         . 0 0 0 . 
+        4 0 0 0 0 6
+         \ ^ ^ ^ / 
+       </pre></td>
+     </tr>
+     <tr>
+      <td><pre class="board">
+        7 8 8 8 8 9
+         . * * . .
+        4 0 0 O . 6
+         . @ O O . 
+        4 0 0 O O 6
+        \ ^ ^ ^ /  
+      </pre></td>
+      <td><pre class="board">
+        7 8 8 8 8 9
+         . * * . .
+        4 O 0 0 . 6
+         . O @ O . 
+        4 O 0 0 O 6
+        \ ^ ^ ^ /  
+      </pre></td>
+      <td><pre class="board">
+        7 8 8 8 8 9
+         . * * . .
+        4 0 0 # . 6
+         . # 0 @ . 
+        4 0 O 0 0 6
+        \ ^ ^ ^ /  
+      </pre></td>
+      <td><pre class="board">
+        7 8 8 8 8 9 _ _ 
+         . * * . .
+        4 # O # . 6
+         . @ ! ! . 
+        4 0 0 0 0 6
+      </pre></td>
+    </tr>
+  </table>
+
+  <hr />
+
+  <table class="hex-board hex-render">
+    <tr><td colspan="4" class="label">1/2/3/4</td></tr>
+    <tr>
+      <td colspan="4" align="center"><pre class="board">
+        7 8 8 8 8 9
+         . . * . .
+        4 . 0 0 . 6
+         . * 0 0 . 
+        4 0 0 0 0 6
+         \ ^ ^ ^ / 
+       </pre></td>
+     </tr>
+     <tr>
+      <td><pre class="board">
+        7 8 8 8 8 9
+         . . * . . 
+        4 . @ O . 6
+         . * O O . 
+        4 0 0 O O 6
+        \ ^ ^ ^ /  
+      </pre></td>
+      <td><pre class="board">
+        7 8 8 8 8 9
+         . . * . . 
+        4 . 0 0 . 6
+         . * @ O . 
+        4 O 0 0 O 6
+        \ ^ ^ ^ /  
+      </pre></td>
+      <td><pre class="board">
+        7 8 8 8 8 9
+        . . * . . 
+        4 . O @ . 6
+        . * # # . 
+        4 0 0 0 0 6
+        \ ^ ^ ^ /  
+      </pre></td>
+      <td><pre class="board">
+        7 8 8 8 8 9 _ _ 
+         . . * . .  _ _ 
+        4 . # # . 6 _ _ 
+         . * ! @ .  _ _ 
+        4 ! O 0 0 6 _ _ 
+        \ ^ ^ ^ /   _ _
+      </pre></td>
+    </tr>
+  </table>
+
+  <hr />
+
+  <table class="hex-board hex-render">
+    <tr><td colspan="4" class="label">2/3/3/4</td></tr>
+    <tr>
+      <td colspan="4" align="center"><pre class="board">
+        7 8 8 8 8 9 _ 
+         . * * . .  _ 
+        4 0 0 0 . 6 _ 
+         . 0 0 0 .  _ 
+        4 0 0 0 0 6 _ 
+         \ ^ ^ ^ /  _ 
+       </pre></td>
+     </tr>
+     <tr>
+      <td><pre class="board">
+        7 8 8 8 8 9
+         . * * . . 
+        4 0 0 O . 6
+         . @ O O . 
+        4 0 0 O O 6
+         \ ^ ^ ^ / 
+      </pre></td>
+      <td><pre class="board">
+        7 8 8 8 8 9
+         . * * . . 
+        4 O 0 0 . 6
+         . O @ O . 
+        4 O 0 0 O 6
+         \ ^ ^ ^ / 
+      </pre></td>
+      <td><pre class="board">
+        7 8 8 8 8 9
+         . * * . . 
+        4 0 0 # . 6
+         . # 0 @ . 
+        4 0 O 0 0 6
+         \ ^ ^ ^ / 
+      </pre></td>
+      <td><pre class="board">
+        7 8 8 8 8 9 _ 
+         . * * . .  _ 
+        4 0{x} O @ . 6 _ 
+         . # 0{x} # .  _ 
+        4 0 0 0 0 6 _ 
+         \ ^ ^ ^ /  _ 
+      </pre></td>
+    </tr>
+  </table>
+
+  <hr />
+
+  <table class="hex-board hex-render">
+    <tr><td colspan="4" class="label">2/3/4/5</td></tr>
+    <tr>
+      <td colspan="2" align="center"><pre class="board">
+        7 8 8 8 8 8 9
+         . . 0 * . . 
+        4 . 0 0 0 . 6
+         . 0 0 0 0 . 
+        4 0 0 * 0 0 6
+         \ ^ ^ ^ ^ / _
+       </pre></td>
+     </tr>
+     <tr>
+      <td><pre class="board">
+        7 8 8 8 8 8 9
+         . . 0 * . . 
+        4 . @ 0 O . 6
+         . # # O O . 
+        4 0 0 * O O 6
+         \ ^ ^ ^ ^ / 
+      </pre></td>
+      <td><pre class="board">
+        7 8 8 8 8 8 9
+         . . O * . . 
+        4 . O O @ . 6
+         . O O # # . 
+        4 O O * 0 0 6
+         \ ^ ^ ^ ^ / 
+      </pre></td>
+    </tr>
+  </table>
+ 
+  <hr />
+
+    <table class="hex-board hex-render">
+      <tr><td colspan="4" class="label">2/3/4/4</td></tr>
+      <tr>
+        <td colspan="4" align="center"><pre class="board">
+          7 8 8 8 8 8 9
+           . . 0 * . . 
+          4 . 0 0 0 . 6
+           . 0 0 0 0 . 
+          4 . * 0 0 0 6
+           \ ^ ^ ^ ^ / _
+         </pre></td>
+       </tr>
+       <tr>
+        <td><pre class="board">
+          7 8 8 8 8 8 9
+           . . 0 * . . 
+          4 . @ 0 O . 6
+           . 0 0 O O . 
+          4 . * O O O 6
+           \ ^ ^ ^ ^ / 
+        </pre></td>
+        <td><pre class="board">
+          7 8 8 8 8 8 9
+           . . O * . . 
+          4 . O 0 0 . 6
+           . O O @ O . 
+          4 . * 0 0 O 6
+           \ ^ ^ ^ ^ / 
+        </pre></td>
+        <td><pre class="board">
+          7 8 8 8 8 8 9
+           . . O * . . 
+          4 . O O @ . 6
+           . O 0 # # . 
+          4 . * 0 0 0 6
+           \ ^ ^ ^ ^ / 
+        </pre></td>
+      </tr>
+    </table>
+
+    <hr />
+
+    <table class="hex-board hex-render">
+      <tr><td colspan="4" class="label">Sphinx 2/4/4/5</td></tr>
+      <tr>
+        <td colspan="4" align="center"><pre class="board">
+          7 8 8 8 8 8 9
+           . * 0 . . . 
+          4 * 0 0 0 . 6
+           . 0 0 0 0 . 
+          4 0 0 0 0 0 6
+           \ ^ ^ ^ ^ / _
+         </pre></td>
+       </tr>
+       <tr>
+        <td><pre class="board">
+          7 8 8 8 8 8 9
+           . * 0 . . . 
+          4 * 0 @ 0 . 6
+           . O 0 0 0 . 
+          4 O 0 0 0 0 6
+           \ ^ ^ ^ ^ / 
+        </pre></td>
+        <td><pre class="board">
+          7 8 8 8 8 8 9
+           . * O . . . 
+          4 * O O O . 6
+           . @ O O O . 
+          4 0 0 O O O 6
+           \ ^ ^ ^ ^ / 
+        </pre></td>
+        <td><pre class="board">
+          7 8 8 8 8 8 9
+           . * 0 . . . 
+          4 * 0 # O . 6
+           . # ! @ O . 
+          4 ! O 0 0 O 6
+           \ ^ ^ ^ ^ / 
+        </pre></td>
+      </tr>
+    </table>
+
+<hr />
+
+<h2>Fifth-row Virtual Connection Templates</h2>
+
+  <table class="hex-board hex-render">
+    <tr><td colspan="3" class="label">3/5/8/9/10</td></tr>
+    <tr>
+      <td colspan="3" align="center"><pre class="board">
+         8 8 8 8 8 8 8 8 8 8 8
+        4 . . . 0 * 0 . . . . 6
+         . . . 0 0 0 0 0 . . .
+        4 . 0 0 0 0 0 0 0 0 . 6
+         . 0 0 0 0 0 0 0 0 0 .
+        4 0 0 0 0 0 0 0 0 0 0 6
+         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
+      </pre></td>
+    </tr>
+    <tr>
+      <td><pre class="board">
+         8 8 8 8 8 8 8 8 8 8 8
+        4 . . . O * O . . . . 6
+         . . . O ! ! O O . . .
+        4 . O O 0 @ O O O O . 6
+         . O O 0 0 0 O O O O .
+        4 O O 0 0 0 0 O O O O 6
+         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
+      </pre></td>
+      <td><pre class="board">
+         8 8 8 8 8 8 8 8 8 8 8
+        4 . . . O * O . . . . 6
+         . . . O ! ! O O . . .
+        4 . O O O @ 0 O O O . 6
+         . O O O 0 0 0 O O O .
+        4 O O O 0 0 0 0 O O O 6
+         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
+      </pre></td>
+      <td><pre class="board">
+         8 8 8 8 8 8 8 8 8 8 8
+        4 . . . O * O . . . . 6
+         . . . O O{x} O{x} O O . . .
+        4 . O O O O{x} O O O O . 6
+         . O O O O{x} O{x} O O O O .
+        4 O O O O{x} O{x} O{x} O O O O 6
+         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
+      </pre></td>
+    </tr>
+    <tr>
+      <td><pre class="board">
+         8 8 8 8 8 8 8 8 8 8 8
+        4 . . . O * ! . . . . 6
+         . . . O O{x} ! @ 0 . . .
+        4 . O O O 0 0 0 0 0 . 6
+         . O O O 0 0 0 0 0 0 .
+        4 O O O 0 0 0 0 0 0 0 6
+         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
+      </pre></td>
+      <td><pre class="board">
+         8 8 8 8 8 8 8 8 8 8 8
+        4 . . . O * O . . . . 6
+         . . . 0 @ O{x} O O . . .
+        4 . 0 0 0 0 0 O O O . 6
+         . 0 0 0 0 0 0 O O O .
+        4 0 0 0 0 0 0 0 O O O 6
+         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
+      </pre></td>
+      <td><pre class="board">
+         8 8 8 8 8 8 8 8 8 8 8
+        4 . . . O * O . . . . 6
+         . . . O O O O O . . .
+        4 . O O O O{x} O O O O . 6
+         . O O O O{x} O{x} O O O O .
+        4 O O O O{x} O{x} O{x} O O O O 6
+         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
+      </pre></td>
+    </tr>
+    <tr>
+      <td><pre class="board">
+         8 8 8 8 8 8 8 8 8 8 8
+        4 . . . O * O . . . . 6
+         . . . 0 @ 0 O O . . .
+        4 . 0 # 0 0 # 0 O O . 6
+         . 0 0 0 O{x} 0 0 0 O O .
+        4 0 0 0 0 0 0 0 0 O O 6
+         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
+      </pre></td>
+      <td><pre class="board">
+         8 8 8 8 8 8 8 8 8 8 8
+        4 . . . O * O . . . . 6
+         . . . O 0 0 O O . . .
+        4 . O O 0 @ 0 O O O . 6
+         . O O # 0 0 # O O O .
+        4 O O 0 0 O{x} 0 0 O O O 6
+         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
+      </pre></td>
+      <td><pre class="board">
+         8 8 8 8 8 8 8 8 8 8 8
+        4 . . . O * O . . . . 6
+         . . . O 0 @ 0 O . . .
+        4 . O 0 # 0 0 # 0 O . 6
+         . O 0 0 0 O{x} 0 0 0 O .
+        4 O 0 0 0 0 0 0 0 0 O 6
+         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
+      </pre></td>
+    </tr>
+    <tr>
+      <td colspan=3 align="center"><pre class="board">
+         8 8 8 8 8 8 8 8 8 8 8
+        4 . . . O * O . . . . 6
+         . . . O O O O O . . .
+        4 . O O O O{x} O O O O . 6
+         . O O O O O O O O O .
+        4 O O O O{x} O O{x} O O O O 6
+         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
+      </pre></td>
+    </tr>
+    <tr><td colspan=3>(To be completed. I don't yet know how to respond
+    to the three remaining attacks.)</td></tr>
+    <tr>
+      <td><pre class="board">
+         8 8 8 8 8 8 8 8 8 8 8
+        4 . . . O * O . . . . 6
+         . . . O O O O O . . .
+        4 . O O O O{x} O O O O . 6
+         . O O O O O O O O O .
+        4 O O O O O O O O O O 6
+         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
+      </pre></td>
+      <td><pre class="board">
+         8 8 8 8 8 8 8 8 8 8 8
+        4 . . . O * O . . . . 6
+         . . . O O O O O . . .
+        4 . O O O O O O O O . 6
+         . O O O O O O O O O .
+        4 O O O O{x} O O O O O O 6
+         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
+      </pre></td>
+      <td><pre class="board">
+         8 8 8 8 8 8 8 8 8 8 8
+        4 . . . O * O . . . . 6
+         . . . O O O O O . . .
+        4 . O O O O O O O O . 6
+         . O O O O O O O O O .
+        4 O O O O O O{x} O O O O 6
+         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
+      </pre></td>
+    </tr>
+  </table>
+
+  <hr />
+
+  <table class="hex-board hex-render">
+    <tr><td colspan="2" class="label">
+        <a href="http://www.trmph.com/hexwiki/Edge_template_IV1d.html">IV1d</a>
+        (3/5/7/8/9)
+    </td></tr>
+    <tr>
+      <td colspan="2" align="center"><pre class="board">
+         8 8 8 8 8 8 8 8 8 8
+        4 . . 0 0 0 . . . . 6
+         . . * 0 0 0 0 . . .
+        4 . 0 0 0 0 0 0 0 . 6
+         . 0 0 0 0 0 0 0 0 .
+        4 0 0 0 0 0 0 0 0 0 6
+         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
+      </pre></td>
+    </tr>
+    <tr><td colspan="2">
+        <p>This template contains a four-way fork. The first three tines of the
+        fork are relatively simple; unfortunately, all three overlap in
+        one place, marked x.  That overlap means that a fourth tine  is
+        required that avoids x. In this case, that fourth tine uses
+        <em>all</em> of the template <em>except</em> for x.</p>
+    </td></tr>
+    <tr>
+      <td><pre class="board">
+         8 8 8 8 8 8 8 8 8 8
+        4 . . O O O . . . . 6
+         . . * O O O O . . .
+        4 . 0 0{x} O O O O O . 6
+         . O @ O O O O O O .
+        4 O 0 0 O O O O O O 6
+         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
+      </pre></td>
+      <td><pre class="board">
+         8 8 8 8 8 8 8 8 8 8
+        4 . . O O O . . . . 6
+         . . * 0 O O O . . .
+        4 . O 0{x} @ 0 O O O . 6
+         . O O 0 0 0 O O O .
+        4 O O 0 0 0 0 O O O 6
+         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
+      </pre></td>
+    </tr>
+    <tr>
+      <td><pre class="board">
+         8 8 8 8 8 8 8 8 8 8
+        4 . . O O O . . . . 6
+         . . * O O O O . . .
+        4 . 0 @{x} 0 O O O O . 6
+         . # 0 0 # O O O O .
+        4 0 0 O 0 0 O O O O 6
+         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
+      </pre></td>
+      <td><pre class="board">
+         8 8 8 8 8 8 8 8 8 8
+        4 . . 0 0 0 . . . . 6
+         . . * 0 0 0 0 . . .
+        4 . @ O{x} 0 0 0 0 0 . 6
+         . 0 0 0 0 0 0 0 0 .
+        4 0 0 0 0 0 0 0 0 0 6
+         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
+      </pre></td>
+    </tr>
+    <tr><td colspan="2">
+        <p>That fourth tine is massive. It contains this two-way fork:</p>
+    </td></tr>
+    <tr>
+      <td><pre class="board">
+         8 8 8 8 8 8 8 8 8 8
+        4 . . O O O . . . . 6
+         . . *{@} O O O O . . .
+        4 . * . O O O O O . 6
+         . @ O O O O O O O .
+        4 ! ! O O O O O O O 6
+         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
+      </pre></td>
+      <td><pre class="board">
+         8 8 8 8 8 8 8 8 8 8
+        4 . . 0 0 0 . . . . 6
+         . . *{@} 0 0 0 0 . . .
+        4 . * . 0 # 0 0 0 . 6
+         . O @ 0 0 0 0 0 0 .
+        4 O O # 0 0 0 0 0 0 6
+         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
+      </pre></td>
+    </td></tr>
+    <tr><td colspan="2">
+        <p>That second tine is huge. It contains this two-way fork:</p>
+    </td></tr>
+    <tr>
+      <td><pre class="board">
+         8 8 8 8 8 8 8 8 8 8
+        4 . . O O O . . . . 6
+      . . *{@} O O O O . . .
+        4 . * . O O O O O . 6
+         . . * O O O O O O .
+        4 . . @ O O O O O O 6
+         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
+      </pre></td>
+      <td><pre class="board">
+         8 8 8 8 8 8 8 8 8 8
+        4 . . 0 0 0 . . . . 6
+         . . *{@} 0 0 0 0 . . .
+        4 . * . 0 @ 0 0 0 . 6
+         . O * 0 0 0 0 0 0 .
+        4 O O O 0 0 0 0 0 0 6
+         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
+      </pre></td>
+    </tr>
+    <tr><td colspan="3">
+        <p>That second tine is large. It contains this <em>six</em>-way
+        fork:</p>
+    </td></tr>
+    <tr>
+      <td ><pre class="board">
+         8 8 8 8 8 8 8 8 8 8
+        4 . . O O O . . . . 6
+         . . *{@} # 0 O O . . .
+        4 . * . 0 * O O O . 6
+         . . * # @ O O O O .
+        4 . . . 0 0 O O O O 6
+         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
+      </pre></td>
+      <td ><pre class="board">
+         8 8 8 8 8 8 8 8 8 8
+        4 . . O O O . . . . 6
+         . . *{@} # 0 O O . . .
+        4 . * . 0 * 0 O O . 6
+         . . * # @ 0 # O O .
+        4 . . . O # 0 0 O O 6
+         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
+      </pre></td>
+      <td ><pre class="board">
+         8 8 8 8 8 8 8 8 8 8
+        4 . . O O O . . . . 6
+      . . *{@} O O O O . . .
+        4 . * . 0 * 0 O O . 6
+         . . * @ 0 0 # O O .
+        4 . . . # O 0 0 O O 6
+         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
+      </pre></td>
+    </tr>
+    <tr>
+      <td ><pre class="board">
+         8 8 8 8 8 8 8 8 8 8
+        4 . . O O O . . . . 6
+         . . *{@} O O O O . . .
+        4 . * . O * 0 O O . 6
+         . . * @ # 0 ! O O .
+        4 . . . # ! 0 0 O O 6
+         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
+      </pre></td>
+      <td ><pre class="board">
+         8 8 8 8 8 8 8 8 8 8
+        4 . . O O O . . . . 6
+      . . *{@} @ 0 O O . . .
+        4 . * . 0 * 0 O O . 6
+         . . * O 0 0 0 O O .
+        4 . . . 0 0 0 0 O O 6
+         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
+      </pre></td>
+      <td ><pre class="board">
+         8 8 8 8 8 8 8 8 8 8
+        4 . . 0 ! 0 . . . . 6
+      . . *{@} 0 0 # 0 . . .
+        4 . * . ! * 0 0 0 . 6
+         . . * @ O 0 0 0 0 .
+        4 . . . # 0 0 0 0 0 6
+         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
+      </pre></td>
+    </tr>
+
+    <tr><td colspan="3">
+        <p>This completes the proof of the original template.</p>
+        <p>There is an alternate way of presenting the middle of the 
+        foregoing proof. Instead of presenting the fourth tine of the top-level
+        fork and its first two subtemplates, we can view the first three tines
+        of the original template as forcing a play in their sole overlap. This
+        leads to to a series of moves where all the opponent's responses
+        are forced. At the end of the sequence, we arrive at the same six-way
+        fork that was just shown.</p>
+    </td></tr>
+    <tr>
+      <td colspan="3" align="center"><pre class="board">
+         8 8 8 8 8 8 8 8 8 8
+        4 . . 0 0 0 . . . . 6
+         . . *{@} 0 0 0 0 . . .
+        4 . *{2} %{1} 0 *{6} 0 0 0 . 6
+         . O *{4} 0 0 0 0 0 0 .
+        4 O %{3} %{5} 0 0 0 0 0 0 6
+         \ ^ ^ ^ ^ ^ ^ ^ ^ ^ /
+      </pre></td>
+    </tr>
+
+  </table>
+
+  </body>  
+</html>  
