@@ -11,7 +11,7 @@
     <!-- <link rel="stylesheet" href="demo-print.css" media="print">  -->
     <script src="jquery-1.7.2.min.js"></script>
     <script src="raphael-min.js"></script>
-    <script id='mainJS' src="hex-board.js"></script>
+    <script id='mainJS' src="hex-painter.js"></script>
     <style type="text/css">
       .honeycomb { font-family: "Amnesia Sans Mono", "monospace"; }
       /*
@@ -52,7 +52,7 @@
   <h1>The Hex Board Editor</h1>
 
     <p>
-    The text below is rendered by hex-board.js into the
+    The text below is rendered by hex-painter.js into the
     orange-bordered picture that follows.
     You may edit this text, and the picture
     will automatically update to reflect your changes.
@@ -60,7 +60,7 @@
 
     <!--
       textarea#code, div#draw, and textarea#monitor are handled specially my
-      hex-board.js: the source code in textarea#code is rendered as SVG into
+      hex-painter.js: the source code in textarea#code is rendered as SVG into
       div#draw, with debugging information printed into textarea#monitor, and
       changes to texarea#code cause the picture to be immediately regenerated.
     -->
