@@ -78,11 +78,15 @@
 
 
     <h2>Vocabulary</h2>
-    The language used to describe hex boards is made up of these tokens.
+    The language used to describe hex boards is made up of several tokens,
+    which are documented in the tables below.
+    Newlines are significant: they cause hex-painter to move to the next line.
+    Whitespace is otherwise ignored, except when it separates tokens that
+    would otherwise be treated as one.
     <table class="hex-board hex-render vocabulary">
       <tr>
         <td colspan="8" class="label">
-          Full Cells
+          Full Hexes
         </td>
       </tr>
       <tr>
@@ -207,7 +211,7 @@
     </table>
 
     <p>
-    Full cell tokens may be immediately followed by a border or corner token,
+    Full-hex tokens may be immediately followed by a border or corner token,
     with no intervening whitespace, to produce a partial cell of that type.
     Here are some examples (it is a known bug that the blue dots aren't
     properly cropped):
